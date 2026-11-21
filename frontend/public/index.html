@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Système de rendez-vous médicaux</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="lang-switch">
+      <button class="lang-btn" data-lang="fr">FR</button>
+      <button class="lang-btn" data-lang="ar">عربي</button>
+    </div>
+
+    <div class="brand">
+      <span class="logo-badge" data-icon="cross" data-size="26"></span>
+      <h1 data-i18n="appTitle"></h1>
+    </div>
+    <p class="subtitle" data-i18n="appSubtitle"></p>
+
+    <p class="role-label" data-i18n="roleQuestion"></p>
+    <div class="role-toggle">
+      <button type="button" class="role-btn active" data-role="patient">
+        <span data-icon="user" data-size="22"></span><span data-i18n="rolePatient"></span>
+      </button>
+      <button type="button" class="role-btn" data-role="doctor">
+        <span data-icon="stethoscope" data-size="22"></span><span data-i18n="roleDoctor"></span>
+      </button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="login" data-i18n="tabLogin"></button>
+      <button class="tab-btn" data-tab="register" data-i18n="tabRegister"></button>
+    </div>
+
+    <div id="loginPanel" class="form-panel active">
+      <form id="loginForm">
+        <label data-i18n="labelEmail"></label>
+        <input type="email" id="loginEmail" placeholder="name@example.com" required>
+        <label data-i18n="labelPassword"></label>
+        <input type="password" id="loginPassword" data-i18n-placeholder="placeholderPassword" required>
+        <a href="#" class="forgot-link" data-i18n="forgotPassword"></a>
+        <div id="loginError" class="error"></div>
+        <button type="submit" class="submit-btn" data-i18n="btnLogin"></button>
+      </form>
+    </div>
+
+    <div id="registerPanel" class="form-panel">
+      <form id="registerForm">
+        <label data-i18n="labelFullName"></label>
+        <input type="text" id="regName" data-i18n-placeholder="placeholderFullName" required>
+        <label data-i18n="labelEmail"></label>
+        <input type="email" id="regEmail" placeholder="name@example.com" required>
+        <label data-i18n="labelPassword"></label>
+        <input type="password" id="regPassword" data-i18n-placeholder="placeholderPassword" required>
+
+        <div id="specialtyField" style="display:none;">
+          <label data-i18n="labelSpecialty"></label>
+          <select id="regSpecialty">
+            <option value="طب عام" data-i18n="specialtyGeneral"></option>
+            <option value="أمراض القلب" data-i18n="specialtyCardio"></option>
+            <option value="الأمراض الجلدية" data-i18n="specialtyDerma"></option>
+            <option value="طب الأطفال" data-i18n="specialtyPediatrics"></option>
+            <option value="طب العيون" data-i18n="specialtyOphthalmology"></option>
+          </select>
+        </div>
+
+        <div id="registerError" class="error"></div>
+        <div id="registerSuccess" class="success"></div>
+        <button type="submit" class="submit-btn" data-i18n="btnRegister"></button>
+      </form>
+    </div>
+
+    <p class="footer-note" data-i18n="footerNote"></p>
+  </div>
+
+  <script src="js/translations.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

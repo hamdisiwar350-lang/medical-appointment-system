@@ -1,0 +1,160 @@
+services:
+
+  user-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: users_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+    networks:
+      - medical-net
+
+  doctor-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: doctors_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - doctor-db-data:/var/lib/postgresql/data
+    networks:
+      - medical-net
+
+  appointment-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: appointments_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - appointment-db-data:/var/lib/postgresql/data
+    networks:
+      - medical-net
+
+  notification-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: notifications_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - notification-db-data:/var/lib/postgresql/data
+    networks:
+      - medical-net
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    networks:
+      - medical-net
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      DB_HOST: user-db
+      DB_NAME: users_db
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      JWT_SECRET: ${JWT_SECRET}
+      DOCTOR_SERVICE_URL: http://doctor-service:3002
+    depends_on:
+      - user-db
+    networks:
+      - medical-net
+
+  doctor-service:
+    build: ./doctor-service
+    ports:
+      - "3102:3002"
+    environment:
+      PORT: 3002
+      DB_HOST: doctor-db
+      DB_NAME: doctors_db
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+    depends_on:
+      - doctor-db
+    networks:
+      - medical-net
+
+  appointment-service:
+    build: ./appointment-service
+    ports:
+      - "3003:3003"
+    environment:
+      PORT: 3003
+      DB_HOST: appointment-db
+      DB_NAME: appointments_db
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672
+      DOCTOR_SERVICE_URL: http://doctor-service:3002
+    depends_on:
+      - appointment-db
+      - rabbitmq
+      - doctor-service
+    networks:
+      - medical-net
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "3004:3004"
+    environment:
+      PORT: 3004
+      DB_HOST: notification-db
+      DB_NAME: notifications_db
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672
+    depends_on:
+      - notification-db
+      - rabbitmq
+    networks:
+      - medical-net
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      JWT_SECRET: ${JWT_SECRET}
+      USER_SERVICE_URL: http://user-service:3001
+      DOCTOR_SERVICE_URL: http://doctor-service:3002
+      APPOINTMENT_SERVICE_URL: http://appointment-service:3003
+    depends_on:
+      - user-service
+      - doctor-service
+      - appointment-service
+    networks:
+      - medical-net
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - medical-net
+
+networks:
+  medical-net:
+    driver: bridge
+
+volumes:
+  user-db-data:
+  doctor-db-data:
+  appointment-db-data:
+  notification-db-data:

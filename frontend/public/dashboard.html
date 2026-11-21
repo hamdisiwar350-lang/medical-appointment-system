@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tableau de bord patient</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <header class="top-bar">
+      <div class="brand-mini">
+        <span class="logo-badge sm" data-icon="cross" data-size="18"></span>
+        <strong data-i18n="appTitle"></strong>
+      </div>
+      <div class="top-actions">
+        <div class="lang-switch inline">
+          <button class="lang-btn" data-lang="fr">FR</button>
+          <button class="lang-btn" data-lang="ar">عربي</button>
+        </div>
+        <span class="role-chip"><span data-icon="user" data-size="14"></span><span data-i18n="roleChipPatient"></span></span>
+        <button id="logoutBtn"><span data-icon="logout" data-size="16"></span><span data-i18n="logout"></span></button>
+      </div>
+    </header>
+
+    <section class="welcome">
+      <h2 class="welcome-title" id="welcomeTitle"></h2>
+      <p data-i18n="welcomeSubtitle"></p>
+    </section>
+
+    <div class="panel">
+      <h2 class="section-title"><span class="icon-badge" data-icon="calendar" data-size="16"></span><span data-i18n="sectionNewAppointment"></span></h2>
+      <form id="bookForm">
+        <label data-i18n="labelDoctor"></label>
+        <select id="doctorSelect" required></select>
+        <label data-i18n="labelDate"></label>
+        <input type="date" id="appointmentDateInput" required>
+        <label data-i18n="labelAvailableTime"></label>
+        <div id="slotsContainer" class="slots-row"></div>
+        <label data-i18n="labelNotes"></label>
+        <textarea id="appointmentNotes" data-i18n-placeholder="notesPlaceholder" rows="3"></textarea>
+        <div id="bookMessage"></div>
+        <button type="submit" class="submit-btn" data-i18n="btnBook"></button>
+      </form>
+    </div>
+
+    <h2 class="section-title"><span class="icon-badge" data-icon="stethoscope" data-size="16"></span><span data-i18n="sectionAvailableDoctors"></span></h2>
+    <div id="specialtyFilter" class="pills-row"></div>
+    <div id="doctorsList" class="grid"></div>
+
+    <h2 class="section-title"><span class="icon-badge" data-icon="calendar" data-size="16"></span><span data-i18n="sectionMyAppointments"></span></h2>
+    <div id="appointmentsList" class="grid"></div>
+  </div>
+
+  <script src="js/translations.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
