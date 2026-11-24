@@ -2,8 +2,8 @@ const Notification = require('../models/Notification');
 
 exports.getAllNotifications = async (req, res) => {
   try {
-    const email = req.headers['x-user-email'] || req.query.email;
-    if (!email) return res.status(400).json({ error: 'email is required' });
+    const email = req.headers['x-user-email'];
+    if (!email) return res.status(401).json({ error: 'Authentification requise' });
 
     const notifications = await Notification.findAll({
       where: { recipientEmail: email },
@@ -18,8 +18,8 @@ exports.getAllNotifications = async (req, res) => {
 
 exports.getUnreadCount = async (req, res) => {
   try {
-    const email = req.headers['x-user-email'] || req.query.email;
-    if (!email) return res.status(400).json({ error: 'email is required' });
+    const email = req.headers['x-user-email'];
+    if (!email) return res.status(401).json({ error: 'Authentification requise' });
 
     const count = await Notification.count({ where: { recipientEmail: email, read: false } });
     res.json({ count });
@@ -42,8 +42,8 @@ exports.markAsRead = async (req, res) => {
 
 exports.markAllAsRead = async (req, res) => {
   try {
-    const email = req.headers['x-user-email'] || req.body.email;
-    if (!email) return res.status(400).json({ error: 'email is required' });
+    const email = req.headers['x-user-email'];
+    if (!email) return res.status(401).json({ error: 'Authentification requise' });
     await Notification.update({ read: true }, { where: { recipientEmail: email, read: false } });
     res.json({ message: 'All notifications marked as read' });
   } catch (error) {

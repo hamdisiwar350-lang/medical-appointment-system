@@ -4,9 +4,10 @@ const { connectRabbitMQ } = require('./config/rabbitmq');
 const appointmentRoutes = require('./routes/appointments');
 
 const app = express();
+app.use(require('helmet')());
 const PORT = process.env.PORT || 3003;
 
-app.use(express.json());
+app.use(express.json({ limit: '10kb' }));
 app.use('/appointments', appointmentRoutes);
 
 app.get('/health', (req, res) => {

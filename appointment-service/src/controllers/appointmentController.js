@@ -77,7 +77,15 @@ exports.getAvailability = async (req, res) => {
 
 exports.createAppointment = async (req, res) => {
   try {
-    const { patientId, patientName, patientEmail, doctorId, appointmentDate, notes } = req.body;
+    // Securite : on ne fait JAMAIS confiance a patientId/patientEmail envoyes dans le body.
+    // Ils viennent du JWT verifie par le gateway (headers x-user-id / x-user-email).
+    const patientId = req.headers['x-user-id'];
+    const patientEmail = req.headers['x-user-email'];
+    const { patientName, doctorId, appointmentDate, notes } = req.body;
+
+    if (!patientId || !patientEmail) {
+      return res.status(401).json({ error: 'Authentification requise' });
+    }
 
     let doctor;
     try {

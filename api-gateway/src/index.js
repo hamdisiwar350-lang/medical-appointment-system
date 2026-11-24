@@ -1,10 +1,12 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const verifyToken = require('./middlewares/auth');
 const requireRole = require('./middlewares/requireRole');
 
 const app = express();
+app.use(helmet());
 app.use(cors());
 const PORT = process.env.PORT || 8080;
 
@@ -46,7 +48,7 @@ app.use('/doctors', verifyToken, forwardUser, createProxyMiddleware({
   pathRewrite: { '^/': '/doctors/' }
 }));
 
-app.use('/appointments', verifyToken, forwardUser, createProxyMiddleware({
+app.use('/appointments', verifyToken, forwardUser, forwardUserEmail, createProxyMiddleware({
   target: process.env.APPOINTMENT_SERVICE_URL,
   changeOrigin: true,
   pathRewrite: { '^/': '/appointments/' }

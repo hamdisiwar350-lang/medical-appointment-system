@@ -74,4 +74,4 @@ curl -s -X PUT $GATEWAY/appointments/$APPT_ID/status \
 
 echo "=== 8. Notifications (attente 3s pour RabbitMQ) ==="
 sleep 3
-curl -s "$NOTIF/notifications?email=$EMAIL"; echo
+curl -s "$GATEWAY/notifications" -H "Authorization: Bearer $TOKEN"; echo

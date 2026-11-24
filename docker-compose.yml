@@ -47,7 +47,6 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     ports:
-      - "5672:5672"
       - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
@@ -57,8 +56,6 @@ services:
 
   user-service:
     build: ./user-service
-    ports:
-      - "3001:3001"
     environment:
       PORT: 3001
       DB_HOST: user-db
@@ -74,8 +71,6 @@ services:
 
   doctor-service:
     build: ./doctor-service
-    ports:
-      - "3102:3002"
     environment:
       PORT: 3002
       DB_HOST: doctor-db
@@ -89,8 +84,6 @@ services:
 
   appointment-service:
     build: ./appointment-service
-    ports:
-      - "3003:3003"
     environment:
       PORT: 3003
       DB_HOST: appointment-db
@@ -108,8 +101,6 @@ services:
 
   notification-service:
     build: ./notification-service
-    ports:
-      - "3004:3004"
     environment:
       PORT: 3004
       DB_HOST: notification-db

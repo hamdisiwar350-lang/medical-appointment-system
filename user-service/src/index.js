@@ -4,9 +4,10 @@ const authRoutes = require('./routes/auth');
 const { loginLimiter } = require('./middlewares/rateLimiter');
 
 const app = express();
+app.use(require('helmet')());
 const PORT = process.env.PORT || 3001;
 
-app.use(express.json());
+app.use(express.json({ limit: '10kb' }));
 app.use('/auth', authRoutes);
 
 app.get('/health', (req, res) => {

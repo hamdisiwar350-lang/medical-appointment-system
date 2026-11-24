@@ -3,9 +3,10 @@ const sequelize = require('./config/database');
 const doctorRoutes = require('./routes/doctors');
 
 const app = express();
+app.use(require('helmet')());
 const PORT = process.env.PORT || 3002;
 
-app.use(express.json());
+app.use(express.json({ limit: '10kb' }));
 app.use('/doctors', doctorRoutes);
 
 app.get('/health', (req, res) => {
