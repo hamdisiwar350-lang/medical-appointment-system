@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notifications médecin</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="doctor-page view-notifications">
+  <div class="doc-layout">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="logo-badge sm" data-icon="cross" data-size="18"></span>
+        <div><strong data-i18n="sidebarBrandLine1"></strong><small data-i18n="sidebarBrandLine2"></small></div>
+      </div>
+
+      <div class="lang-switch inline sidebar-lang">
+        <button class="lang-btn" data-lang="fr">FR</button>
+        <button class="lang-btn" data-lang="ar">عربي</button>
+      </div>
+
+      <div class="doc-profile">
+        <div class="avatar" id="docAvatar"></div>
+        <strong id="docName"></strong>
+        <small id="docSpecialty"></small>
+      </div>
+
+      <nav class="side-nav">
+        <a href="doctor-dashboard.html" class="nav-item"><span data-icon="layout" data-size="18"></span><span data-i18n="navDashboard"></span></a>
+        <a href="doctor-appointments.html" class="nav-item"><span data-icon="calendar" data-size="18"></span><span data-i18n="navMyAppointments"></span></a>
+        <a href="doctor-patients.html" class="nav-item"><span data-icon="users" data-size="18"></span><span data-i18n="navMyPatients"></span></a>
+        <a href="doctor-notifications.html" class="nav-item active"><span data-icon="bell" data-size="18"></span><span data-i18n="navNotifications"></span></a>
+        <a href="doctor-settings.html" class="nav-item"><span data-icon="settings" data-size="18"></span><span data-i18n="navSettings"></span></a>
+      </nav>
+
+      <button id="docLogout" class="side-logout"><span data-icon="logout" data-size="18"></span><span data-i18n="logout"></span></button>
+    </aside>
+    <main class="doc-main">
+      <header class="doc-header">
+        <div>
+          <h1 data-i18n="controlPanelTitle"></h1>
+          <p id="docGreeting"></p>
+        </div>
+        <div class="header-right">
+          <div class="notif-wrap">
+            <button id="notifBellBtn" class="bell-btn" aria-label="Notifications">
+              <span data-icon="bell" data-size="18"></span>
+              <span id="notifBadge" class="notif-badge" hidden></span>
+            </button>
+            <div id="notifDropdown" class="notif-dropdown">
+              <div class="notif-dropdown-head">
+                <strong data-i18n="notifBellLabel"></strong>
+                <button class="notif-markall" data-notif-mark-all data-i18n="notifMarkAllRead"></button>
+              </div>
+              <div id="notifDropdownList" class="notif-dropdown-list"></div>
+              <a href="doctor-notifications.html" class="notif-seeall" data-i18n="notifSeeAll"></a>
+            </div>
+          </div>
+          <div class="date-chip"><span data-icon="calendar" data-size="16"></span><span id="todayDate"></span></div>
+        </div>
+      </header>
+      <section class="panel">
+        <div class="panel-head">
+          <h2 class="section-title">
+            <span class="icon-badge" data-icon="bell" data-size="16"></span>
+            <span data-i18n="notifPageTitle"></span>
+          </h2>
+          <button class="pill" data-notif-mark-all
+                  data-i18n="notifMarkAllRead"></button>
+        </div>
+        <div id="notifPageList" class="notif-page-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/translations.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/doctor-shell.js"></script>
+  <script src="js/notifications.js"></script>
+</body>
+</html>

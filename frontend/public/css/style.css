@@ -464,3 +464,47 @@ body.doctor-page { display: block; padding: 0; }
   font-size: 13px; font-weight: 700; color: #2563eb; text-decoration: none;
   padding: 8px 16px; border-radius: 8px; background: #eff6ff;
 }
+
+/* Pages indépendantes du médecin */
+
+.doctor-page.view-appointments .stats,
+.doctor-page.view-appointments #patientsSection,
+.doctor-page.view-appointments #patientsGrid,
+.doctor-page.view-patients .stats,
+.doctor-page.view-patients #todaySection,
+.doctor-page.view-settings .stats,
+.doctor-page.view-settings #todaySection,
+.doctor-page.view-settings #patientsSection,
+.doctor-page.view-settings #patientsGrid {
+    display: none !important;
+}
+
+.doctor-settings-form {
+    display: grid;
+    gap: 10px;
+    max-width: 540px;
+}
+
+.doctor-settings-form label {
+    color: #475569;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 8px;
+}
+
+.doctor-settings-form input {
+    width: 100%;
+    min-height: 44px;
+    border: 1px solid #dbe3ec;
+    border-radius: 9px;
+    padding: 10px 12px;
+    font: inherit;
+}
+
+.settings-message {
+    min-height: 22px;
+    font-size: 13px;
+}
+
+.settings-message.success { color: #15803d; }
+.settings-message.error { color: #dc2626; }

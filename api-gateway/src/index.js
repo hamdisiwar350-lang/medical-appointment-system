@@ -42,7 +42,14 @@ app.use(
   })
 );
 
-app.use('/doctors', verifyToken, forwardUser, createProxyMiddleware({
+app.use('/doctors', verifyToken, forwardUser, (req, res, next) => {
+  if (req.method === 'PUT' && req.user.role !== 'doctor') {
+    return res.status(403).json({
+      error: 'Only doctors can update doctor profiles'
+    });
+  }
+  next();
+}, createProxyMiddleware({
   target: process.env.DOCTOR_SERVICE_URL,
   changeOrigin: true,
   pathRewrite: { '^/': '/doctors/' }
