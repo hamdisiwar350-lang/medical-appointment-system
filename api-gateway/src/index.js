@@ -13,6 +13,11 @@ function forwardUser(req, res, next) {
   next();
 }
 
+function forwardUserEmail(req, res, next) {
+  if (req.user) req.headers['x-user-email'] = req.user.email;
+  next();
+}
+
 app.get('/health', (req, res) => {
   res.json({ status: 'api-gateway running' });
 });
@@ -45,6 +50,12 @@ app.use('/appointments', verifyToken, forwardUser, createProxyMiddleware({
   target: process.env.APPOINTMENT_SERVICE_URL,
   changeOrigin: true,
   pathRewrite: { '^/': '/appointments/' }
+}));
+
+app.use('/notifications', verifyToken, forwardUserEmail, createProxyMiddleware({
+  target: process.env.NOTIFICATION_SERVICE_URL,
+  changeOrigin: true,
+  pathRewrite: { '^/': '/notifications/' }
 }));
 
 app.listen(PORT, () => {

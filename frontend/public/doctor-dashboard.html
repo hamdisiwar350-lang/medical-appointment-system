@@ -30,6 +30,7 @@
         <a href="#top" class="nav-item active"><span data-icon="layout" data-size="18"></span><span data-i18n="navDashboard"></span></a>
         <a href="#todaySection" class="nav-item"><span data-icon="calendar" data-size="18"></span><span data-i18n="navMyAppointments"></span></a>
         <a href="#patientsSection" class="nav-item"><span data-icon="users" data-size="18"></span><span data-i18n="navMyPatients"></span></a>
+        <a href="notifications.html" class="nav-item"><span data-icon="bell" data-size="18"></span><span data-i18n="navNotifications"></span></a>
         <a href="#" class="nav-item"><span data-icon="settings" data-size="18"></span><span data-i18n="navSettings"></span></a>
       </nav>
 
@@ -42,7 +43,23 @@
           <h1 data-i18n="controlPanelTitle"></h1>
           <p id="docGreeting"></p>
         </div>
-        <div class="date-chip"><span data-icon="calendar" data-size="16"></span><span id="todayDate"></span></div>
+        <div class="header-right">
+          <div class="notif-wrap">
+            <button id="notifBellBtn" class="bell-btn" aria-label="Notifications">
+              <span data-icon="bell" data-size="18"></span>
+              <span id="notifBadge" class="notif-badge" hidden></span>
+            </button>
+            <div id="notifDropdown" class="notif-dropdown">
+              <div class="notif-dropdown-head">
+                <strong data-i18n="notifBellLabel"></strong>
+                <button class="notif-markall" data-notif-mark-all data-i18n="notifMarkAllRead"></button>
+              </div>
+              <div id="notifDropdownList" class="notif-dropdown-list"></div>
+              <a href="notifications.html" class="notif-seeall" data-i18n="notifSeeAll"></a>
+            </div>
+          </div>
+          <div class="date-chip"><span data-icon="calendar" data-size="16"></span><span id="todayDate"></span></div>
+        </div>
       </header>
 
       <section class="stats">
@@ -95,5 +112,6 @@
   <script src="js/icons.js"></script>
   <script src="js/api.js"></script>
   <script src="js/doctor-dashboard.js"></script>
+  <script src="js/notifications.js"></script>
 </body>
 </html>

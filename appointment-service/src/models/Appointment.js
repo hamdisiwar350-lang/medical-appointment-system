@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const sequelize = require('../config/database');
 
 const Appointment = sequelize.define('Appointment', {
@@ -38,6 +38,16 @@ const Appointment = sequelize.define('Appointment', {
   notes: {
     type: DataTypes.TEXT
   }
-}, { timestamps: true });
+}, {
+  timestamps: true,
+  indexes: [
+    {
+      unique: true,
+      name: 'unique_doctor_slot_active',
+      fields: ['doctorId', 'appointmentDate'],
+      where: { status: { [Op.ne]: 'cancelled' } }
+    }
+  ]
+});
 
 module.exports = Appointment;

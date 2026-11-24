@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { Op } = require('sequelize');
 const Appointment = require('../models/Appointment');
-const { publishAppointmentCreated } = require('../config/rabbitmq');
+const { publishAppointmentCreated, publishStatusUpdated } = require('../config/rabbitmq');
 
 const SLOT_DURATION_MINUTES = 30;
 
@@ -40,7 +40,6 @@ exports.getAvailability = async (req, res) => {
     }
 
     const allSlots = generateSlots(doctor.availableFrom, doctor.availableTo);
-
     const dayStart = new Date(`${date}T00:00:00.000Z`);
     const dayEnd = new Date(`${date}T23:59:59.999Z`);
 
@@ -96,27 +95,25 @@ exports.createAppointment = async (req, res) => {
       return res.status(400).json({ error: 'Cannot book an appointment in the past' });
     }
 
-    const conflict = await Appointment.findOne({
-      where: {
-        doctorId,
-        appointmentDate: requestedDate,
-        status: { [Op.ne]: 'cancelled' }
+    let appointment;
+    try {
+      appointment = await Appointment.create({
+        patientId, patientName, patientEmail, doctorId,
+        doctorName: doctor.name, appointmentDate, notes
+      });
+    } catch (err) {
+      if (err.name === 'SequelizeUniqueConstraintError') {
+        return res.status(409).json({ error: 'This time slot is no longer available' });
       }
-    });
-    if (conflict) {
-      return res.status(409).json({ error: 'This time slot is no longer available' });
+      throw err;
     }
-
-    const appointment = await Appointment.create({
-      patientId, patientName, patientEmail, doctorId,
-      doctorName: doctor.name, appointmentDate, notes
-    });
 
     publishAppointmentCreated({
       appointmentId: appointment.id,
       patientName: appointment.patientName,
       patientEmail: appointment.patientEmail,
       doctorName: appointment.doctorName,
+      doctorEmail: doctor.email,
       appointmentDate: appointment.appointmentDate
     });
 
@@ -153,20 +150,29 @@ exports.getAppointmentById = async (req, res) => {
 exports.updateStatus = async (req, res) => {
   try {
     const { status } = req.body;
-    const requestingDoctorId = req.headers["x-user-id"];
-    const validStatuses = ["pending", "confirmed", "cancelled", "completed"];
-    if (!validStatuses.includes(status)) return res.status(400).json({ error: "Invalid status" });
+    const requestingDoctorId = req.headers['x-user-id'];
+    const validStatuses = ['pending', 'confirmed', 'cancelled', 'completed'];
+    if (!validStatuses.includes(status)) return res.status(400).json({ error: 'Invalid status' });
 
     const appointment = await Appointment.findByPk(req.params.id);
-    if (!appointment) return res.status(404).json({ error: "Appointment not found" });
+    if (!appointment) return res.status(404).json({ error: 'Appointment not found' });
 
     if (requestingDoctorId && appointment.doctorId !== requestingDoctorId) {
-      return res.status(403).json({ error: "You can only update your own appointments" });
+      return res.status(403).json({ error: 'You can only update your own appointments' });
     }
 
     appointment.status = status;
     await appointment.save();
-    res.json({ message: "Status updated successfully", appointment });
+
+    publishStatusUpdated({
+      appointmentId: appointment.id,
+      patientEmail: appointment.patientEmail,
+      doctorName: appointment.doctorName,
+      appointmentDate: appointment.appointmentDate,
+      status: appointment.status
+    });
+
+    res.json({ message: 'Status updated successfully', appointment });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

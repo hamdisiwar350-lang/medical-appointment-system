@@ -18,6 +18,20 @@
           <button class="lang-btn" data-lang="fr">FR</button>
           <button class="lang-btn" data-lang="ar">عربي</button>
         </div>
+        <div class="notif-wrap">
+          <button id="notifBellBtn" class="bell-btn" aria-label="Notifications">
+            <span data-icon="bell" data-size="18"></span>
+            <span id="notifBadge" class="notif-badge" hidden></span>
+          </button>
+          <div id="notifDropdown" class="notif-dropdown">
+            <div class="notif-dropdown-head">
+              <strong data-i18n="notifBellLabel"></strong>
+              <button class="notif-markall" data-notif-mark-all data-i18n="notifMarkAllRead"></button>
+            </div>
+            <div id="notifDropdownList" class="notif-dropdown-list"></div>
+            <a href="notifications.html" class="notif-seeall" data-i18n="notifSeeAll"></a>
+          </div>
+        </div>
         <span class="role-chip"><span data-icon="user" data-size="14"></span><span data-i18n="roleChipPatient"></span></span>
         <button id="logoutBtn"><span data-icon="logout" data-size="16"></span><span data-i18n="logout"></span></button>
       </div>
@@ -57,5 +71,6 @@
   <script src="js/icons.js"></script>
   <script src="js/api.js"></script>
   <script src="js/dashboard.js"></script>
+  <script src="js/notifications.js"></script>
 </body>
 </html>

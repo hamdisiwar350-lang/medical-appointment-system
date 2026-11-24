@@ -70,6 +70,7 @@ window.TRANSLATIONS = {
     navMyAppointments: "Mes rendez-vous",
     navMyPatients: "Mes patients",
     navSettings: "Paramètres",
+    navNotifications: "Notifications",
     controlPanelTitle: "Tableau de bord",
     doctorGreeting: "Bonjour {name}, voici le résumé de vos rendez-vous et patients",
     doctorFallbackLabel: "Médecin",
@@ -91,7 +92,19 @@ window.TRANSLATIONS = {
     patientsSectionTitle: "Liste de mes patients",
     noPatientsYet: "Aucun patient pour le moment.",
     lastAppointmentLabel: "Dernier rendez-vous",
-    visitCountLabel: "Nombre de rendez-vous"
+    visitCountLabel: "Nombre de rendez-vous",
+
+    notifBellLabel: "Notifications",
+    notifMarkAllRead: "Tout marquer comme lu",
+    notifEmpty: "Aucune notification",
+    notifSeeAll: "Voir toutes les notifications",
+    notifPageTitle: "Mes notifications",
+    notifBack: "Retour",
+    notifNewAppointmentPatient: "Votre demande de rendez-vous avec {doctorName} le {date} a été envoyée.",
+    notifNewAppointmentDoctor: "Nouvelle demande de rendez-vous de {patientName} le {date}.",
+    notifStatusConfirmed: "Votre rendez-vous avec {doctorName} le {date} a été confirmé.",
+    notifStatusCancelled: "Votre rendez-vous avec {doctorName} le {date} a été annulé.",
+    notifStatusCompleted: "Votre rendez-vous avec {doctorName} le {date} est marqué comme terminé."
   },
   ar: {
     appTitle: "نظام المواعيد الطبية",
@@ -164,6 +177,7 @@ window.TRANSLATIONS = {
     navMyAppointments: "مواعيدي",
     navMyPatients: "مرضاي",
     navSettings: "الإعدادات",
+    navNotifications: "الإشعارات",
     controlPanelTitle: "لوحة التحكم",
     doctorGreeting: "مرحباً {name}، إليك ملخص مواعيدك ومرضاك",
     doctorFallbackLabel: "طبيب",
@@ -185,7 +199,19 @@ window.TRANSLATIONS = {
     patientsSectionTitle: "قائمة مرضاي",
     noPatientsYet: "لا يوجد مرضى بعد.",
     lastAppointmentLabel: "آخر موعد",
-    visitCountLabel: "عدد المواعيد"
+    visitCountLabel: "عدد المواعيد",
+
+    notifBellLabel: "الإشعارات",
+    notifMarkAllRead: "تحديد الكل كمقروء",
+    notifEmpty: "لا توجد إشعارات",
+    notifSeeAll: "عرض جميع الإشعارات",
+    notifPageTitle: "إشعاراتي",
+    notifBack: "رجوع",
+    notifNewAppointmentPatient: "تم إرسال طلب حجزك مع {doctorName} بتاريخ {date}.",
+    notifNewAppointmentDoctor: "طلب حجز جديد من {patientName} بتاريخ {date}.",
+    notifStatusConfirmed: "تم تأكيد موعدك مع {doctorName} بتاريخ {date}.",
+    notifStatusCancelled: "تم إلغاء موعدك مع {doctorName} بتاريخ {date}.",
+    notifStatusCompleted: "تم تحديد موعدك كمكتمل مع {doctorName} بتاريخ {date}."
   }
 };
 

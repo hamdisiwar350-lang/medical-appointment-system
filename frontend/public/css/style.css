@@ -423,3 +423,44 @@ body.doctor-page { display: block; padding: 0; }
 .lang-switch.inline { margin-bottom: 0; }
 .sidebar-lang { margin: 0 0 18px; }
 .top-actions { flex-wrap: wrap; }
+
+.header-right { display: flex; align-items: center; gap: 12px; }
+.notif-wrap { position: relative; }
+.bell-btn {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 10px; border: none; background: #f1f5f9;
+  color: #475569; cursor: pointer;
+}
+.bell-btn:hover { background: #e2e8f0; }
+.notif-badge {
+  position: absolute; top: -4px; inset-inline-end: -4px; min-width: 16px; height: 16px;
+  padding: 0 4px; border-radius: 999px; background: #dc2626; color: #fff;
+  font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+}
+.notif-dropdown {
+  display: none; position: absolute; top: 46px; inset-inline-end: 0; width: 320px;
+  background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(30,41,59,0.15);
+  z-index: 50; overflow: hidden;
+}
+.notif-dropdown.open { display: block; }
+.notif-dropdown-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 14px; border-bottom: 1px solid #f1f5f9;
+}
+.notif-markall { background: none; border: none; color: #2563eb; font-size: 11.5px; font-weight: 700; cursor: pointer; }
+.notif-dropdown-list { max-height: 320px; overflow-y: auto; }
+.notif-item { padding: 12px 14px; border-bottom: 1px solid #f8fafc; cursor: pointer; }
+.notif-item:hover { background: #f8fafc; }
+.notif-item.unread { background: #eff6ff; }
+.notif-item p { font-size: 13px; color: #1a2634; margin-bottom: 4px; line-height: 1.5; }
+.notif-item small { font-size: 11px; color: #94a3b8; }
+.notif-seeall {
+  display: block; text-align: center; padding: 10px; font-size: 12.5px; font-weight: 700;
+  color: #2563eb; text-decoration: none; border-top: 1px solid #f1f5f9;
+}
+.notif-empty { padding: 24px; text-align: center; color: #94a3b8; font-size: 13px; }
+.notif-page-list .notif-item { border-radius: 10px; margin-bottom: 8px; border: 1px solid #f1f5f9; }
+.back-link {
+  font-size: 13px; font-weight: 700; color: #2563eb; text-decoration: none;
+  padding: 8px 16px; border-radius: 8px; background: #eff6ff;
+}

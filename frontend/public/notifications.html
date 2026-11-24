@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notifications</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <header class="top-bar">
+      <div class="brand-mini">
+        <span class="logo-badge sm" data-icon="cross" data-size="18"></span>
+        <strong data-i18n="appTitle"></strong>
+      </div>
+      <div class="top-actions">
+        <div class="lang-switch inline">
+          <button class="lang-btn" data-lang="fr">FR</button>
+          <button class="lang-btn" data-lang="ar">عربي</button>
+        </div>
+        <a id="backLink" href="dashboard.html" class="back-link" data-i18n="notifBack"></a>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="section-title"><span class="icon-badge" data-icon="bell" data-size="16"></span><span data-i18n="notifPageTitle"></span></h2>
+        <button class="pill" data-notif-mark-all data-i18n="notifMarkAllRead"></button>
+      </div>
+      <div id="notifPageList" class="notif-page-list"></div>
+    </section>
+  </div>
+
+  <script src="js/translations.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    const user = getUser();
+    if (!getToken() || !user) window.location.href = 'index.html';
+    document.getElementById('backLink').href = user.role === 'doctor' ? 'doctor-dashboard.html' : 'dashboard.html';
+    window.onLanguageChange = null;
+  </script>
+  <script src="js/notifications.js"></script>
+</body>
+</html>

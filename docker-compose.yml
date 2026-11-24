@@ -133,6 +133,7 @@ services:
       USER_SERVICE_URL: http://user-service:3001
       DOCTOR_SERVICE_URL: http://doctor-service:3002
       APPOINTMENT_SERVICE_URL: http://appointment-service:3003
+      NOTIFICATION_SERVICE_URL: http://notification-service:3004
     depends_on:
       - user-service
       - doctor-service

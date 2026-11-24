@@ -15,13 +15,22 @@ const Notification = sequelize.define('Notification', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  message: {
-    type: DataTypes.TEXT,
+  type: {
+    type: DataTypes.STRING,
     allowNull: false
+  },
+  data: {
+    type: DataTypes.JSON,
+    allowNull: false,
+    defaultValue: {}
+  },
+  read: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   },
   status: {
     type: DataTypes.ENUM('pending', 'sent', 'failed'),
-    defaultValue: 'pending'
+    defaultValue: 'sent'
   }
 }, { timestamps: true });
 
