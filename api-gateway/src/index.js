@@ -20,6 +20,11 @@ function forwardUserEmail(req, res, next) {
   next();
 }
 
+function forwardUserRole(req, res, next) {
+  if (req.user) req.headers['x-user-role'] = req.user.role;
+  next();
+}
+
 app.get('/health', (req, res) => {
   res.json({ status: 'api-gateway running' });
 });
@@ -35,6 +40,7 @@ app.use(
   verifyToken,
   requireRole('doctor'),
   forwardUser,
+  forwardUserRole,
   createProxyMiddleware({
     target: process.env.APPOINTMENT_SERVICE_URL,
     changeOrigin: true,
@@ -42,7 +48,7 @@ app.use(
   })
 );
 
-app.use('/doctors', verifyToken, forwardUser, (req, res, next) => {
+app.use('/doctors', verifyToken, forwardUser, forwardUserRole, (req, res, next) => {
   if (req.method === 'PUT' && req.user.role !== 'doctor') {
     return res.status(403).json({
       error: 'Only doctors can update doctor profiles'
@@ -55,13 +61,56 @@ app.use('/doctors', verifyToken, forwardUser, (req, res, next) => {
   pathRewrite: { '^/': '/doctors/' }
 }));
 
-app.use('/appointments', verifyToken, forwardUser, forwardUserEmail, createProxyMiddleware({
+function authorizeAppointmentRoute(req, res, next) {
+  const role = req.user && req.user.role;
+
+  if (!['patient', 'doctor'].includes(role)) {
+    return res.status(403).json({ error: 'Access forbidden' });
+  }
+
+  if (req.method === 'POST' && role !== 'patient') {
+    return res.status(403).json({
+      error: 'Only patients can create appointments'
+    });
+  }
+
+  if (!['GET', 'POST'].includes(req.method)) {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  next();
+}
+
+app.use(
+  '/appointments',
+  verifyToken,
+  authorizeAppointmentRoute,
+  forwardUser,
+  forwardUserEmail,
+  forwardUserRole,
+  createProxyMiddleware({
   target: process.env.APPOINTMENT_SERVICE_URL,
   changeOrigin: true,
   pathRewrite: { '^/': '/appointments/' }
 }));
 
-app.use('/notifications', verifyToken, forwardUserEmail, createProxyMiddleware({
+app.use(
+  '/notifications',
+  verifyToken,
+  (req, res, next) => {
+    if (!['patient', 'doctor'].includes(req.user.role)) {
+      return res.status(403).json({ error: 'Access forbidden' });
+    }
+
+    if (!['GET', 'PUT'].includes(req.method)) {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    next();
+  },
+  forwardUserEmail,
+  forwardUserRole,
+  createProxyMiddleware({
   target: process.env.NOTIFICATION_SERVICE_URL,
   changeOrigin: true,
   pathRewrite: { '^/': '/notifications/' }

@@ -77,41 +77,68 @@ exports.getAvailability = async (req, res) => {
 
 exports.createAppointment = async (req, res) => {
   try {
-    // Securite : on ne fait JAMAIS confiance a patientId/patientEmail envoyes dans le body.
-    // Ils viennent du JWT verifie par le gateway (headers x-user-id / x-user-email).
     const patientId = req.headers['x-user-id'];
     const patientEmail = req.headers['x-user-email'];
-    const { patientName, doctorId, appointmentDate, notes } = req.body;
+    const role = req.headers['x-user-role'];
+
+    if (role !== 'patient') {
+      return res.status(403).json({
+        error: 'Only patients can create appointments'
+      });
+    }
 
     if (!patientId || !patientEmail) {
-      return res.status(401).json({ error: 'Authentification requise' });
+      return res.status(401).json({
+        error: 'Authenticated patient required'
+      });
+    }
+
+    const { patientName, doctorId, appointmentDate, notes } = req.body;
+
+    if (!doctorId || !appointmentDate || !patientName) {
+      return res.status(400).json({
+        error: 'patientName, doctorId and appointmentDate are required'
+      });
     }
 
     let doctor;
     try {
-      const response = await axios.get(`${process.env.DOCTOR_SERVICE_URL}/doctors/${doctorId}`);
+      const response = await axios.get(
+        `${process.env.DOCTOR_SERVICE_URL}/doctors/${encodeURIComponent(doctorId)}`
+      );
       doctor = response.data;
     } catch (err) {
       return res.status(404).json({ error: 'Doctor not found' });
     }
 
     const requestedDate = new Date(appointmentDate);
+
     if (isNaN(requestedDate.getTime())) {
       return res.status(400).json({ error: 'Invalid appointment date' });
     }
+
     if (requestedDate < new Date()) {
-      return res.status(400).json({ error: 'Cannot book an appointment in the past' });
+      return res.status(400).json({
+        error: 'Cannot book an appointment in the past'
+      });
     }
 
     let appointment;
     try {
       appointment = await Appointment.create({
-        patientId, patientName, patientEmail, doctorId,
-        doctorName: doctor.name, appointmentDate, notes
+        patientId,
+        patientName,
+        patientEmail,
+        doctorId,
+        doctorName: doctor.name,
+        appointmentDate: requestedDate,
+        notes
       });
     } catch (err) {
       if (err.name === 'SequelizeUniqueConstraintError') {
-        return res.status(409).json({ error: 'This time slot is no longer available' });
+        return res.status(409).json({
+          error: 'This time slot is no longer available'
+        });
       }
       throw err;
     }
@@ -125,7 +152,10 @@ exports.createAppointment = async (req, res) => {
       appointmentDate: appointment.appointmentDate
     });
 
-    res.status(201).json({ message: 'Appointment created successfully', appointment });
+    res.status(201).json({
+      message: 'Appointment created successfully',
+      appointment
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -133,13 +163,32 @@ exports.createAppointment = async (req, res) => {
 
 exports.getAllAppointments = async (req, res) => {
   try {
-    const { doctorId, patientId } = req.query;
-    const where = {};
-    if (doctorId) where.doctorId = doctorId;
-    if (patientId) where.patientId = patientId;
+    const userId = req.headers['x-user-id'];
+    const role = req.headers['x-user-role'];
 
-    const appointments = await Appointment.findAll({ where, order: [['appointmentDate', 'ASC']] });
-    res.json({ count: appointments.length, appointments });
+    if (!userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const where = {};
+
+    if (role === 'patient') {
+      where.patientId = userId;
+    } else if (role === 'doctor') {
+      where.doctorId = userId;
+    } else {
+      return res.status(403).json({ error: 'Access forbidden' });
+    }
+
+    const appointments = await Appointment.findAll({
+      where,
+      order: [['appointmentDate', 'ASC']]
+    });
+
+    res.json({
+      count: appointments.length,
+      appointments
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -147,8 +196,28 @@ exports.getAllAppointments = async (req, res) => {
 
 exports.getAppointmentById = async (req, res) => {
   try {
+    const userId = req.headers['x-user-id'];
+    const role = req.headers['x-user-role'];
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
     const appointment = await Appointment.findByPk(req.params.id);
-    if (!appointment) return res.status(404).json({ error: 'Appointment not found' });
+
+    if (!appointment) {
+      return res.status(404).json({ error: 'Appointment not found' });
+    }
+
+    const isOwner =
+      (role === 'patient' && appointment.patientId === userId) ||
+      (role === 'doctor' && appointment.doctorId === userId);
+
+    if (!isOwner) {
+      // 404 évite de révéler l'existence d'un rendez-vous appartenant à autrui.
+      return res.status(404).json({ error: 'Appointment not found' });
+    }
+
     res.json(appointment);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -157,16 +226,30 @@ exports.getAppointmentById = async (req, res) => {
 
 exports.updateStatus = async (req, res) => {
   try {
-    const { status } = req.body;
     const requestingDoctorId = req.headers['x-user-id'];
+    const role = req.headers['x-user-role'];
+
+    if (role !== 'doctor' || !requestingDoctorId) {
+      return res.status(403).json({
+        error: 'Only authenticated doctors can update appointment status'
+      });
+    }
+
+    const { status } = req.body;
     const validStatuses = ['pending', 'confirmed', 'cancelled', 'completed'];
-    if (!validStatuses.includes(status)) return res.status(400).json({ error: 'Invalid status' });
+
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ error: 'Invalid status' });
+    }
 
     const appointment = await Appointment.findByPk(req.params.id);
-    if (!appointment) return res.status(404).json({ error: 'Appointment not found' });
 
-    if (requestingDoctorId && appointment.doctorId !== requestingDoctorId) {
-      return res.status(403).json({ error: 'You can only update your own appointments' });
+    if (!appointment) {
+      return res.status(404).json({ error: 'Appointment not found' });
+    }
+
+    if (appointment.doctorId !== requestingDoctorId) {
+      return res.status(404).json({ error: 'Appointment not found' });
     }
 
     appointment.status = status;
@@ -180,7 +263,10 @@ exports.updateStatus = async (req, res) => {
       status: appointment.status
     });
 
-    res.json({ message: 'Status updated successfully', appointment });
+    res.json({
+      message: 'Status updated successfully',
+      appointment
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
