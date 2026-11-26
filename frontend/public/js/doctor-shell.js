@@ -2,12 +2,16 @@
   const user = getUser();
 
   if (!getToken() || !user || user.role !== "doctor") {
-    window.location.href = user && user.role === "patient"
-      ? "dashboard.html" : "index.html";
+    const destination = user?.role === "assistant"
+      ? "assistant-dashboard.html"
+      : user?.role === "patient"
+        ? "dashboard.html"
+        : "index.html";
+
+    window.location.replace(destination);
     return;
   }
 
-  let specialty = "";
 
   function renderProfile() {
     const name = user.name || "";
@@ -26,11 +30,7 @@
 
     if (greeting) greeting.textContent = t("doctorGreeting", { name });
 
-    if (specialtyEl) {
-      specialtyEl.textContent = specialty
-        ? translateSpecialty(specialty)
-        : t("doctorFallbackLabel");
-    }
+    if (specialtyEl) specialtyEl.textContent = t("dentistRoleLabel");
 
     if (dateEl) {
       dateEl.textContent = new Date().toLocaleDateString(localeTag(), {
@@ -52,14 +52,5 @@
       window.location.href = "index.html";
     });
 
-    try {
-      const doctor = await apiRequest(
-        `/doctors/${encodeURIComponent(user.id)}`
-      );
-      specialty = doctor.specialty || "";
-      renderProfile();
-    } catch (error) {
-      console.error("Doctor profile:", error);
-    }
   });
 })();

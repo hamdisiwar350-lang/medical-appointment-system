@@ -508,3 +508,40 @@ body.doctor-page { display: block; padding: 0; }
 
 .settings-message.success { color: #15803d; }
 .settings-message.error { color: #dc2626; }
+
+
+/* ===== Assistant dashboard ===== */
+.assistant-page .assistant-avatar {
+  background: linear-gradient(135deg, #0f766e, #5eead4);
+}
+
+.assistant-page .nav-item.active {
+  background: #ecfdf5;
+  color: #0f766e;
+}
+
+.assistant-page .assistant-stats .stat-icon {
+  background: #ecfdf5;
+  color: #0f766e;
+}
+
+.assistant-page .assistant-appointments-panel {
+  margin-top: 4px;
+}
+
+.assistant-page .assistant-privacy-note {
+  margin-top: 16px;
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.assistant-page .assistant-appointments-panel .actions {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .assistant-page .appt-table {
+    min-width: 620px;
+  }
+}

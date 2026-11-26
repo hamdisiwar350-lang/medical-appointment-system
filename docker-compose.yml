@@ -64,6 +64,7 @@ services:
       DB_PASS: ${DB_PASS}
       JWT_SECRET: ${JWT_SECRET}
       DOCTOR_SERVICE_URL: http://doctor-service:3002
+      CLINIC_DOCTOR_ID: ${CLINIC_DOCTOR_ID}
     depends_on:
       - user-db
     networks:
@@ -77,6 +78,7 @@ services:
       DB_NAME: doctors_db
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
+      CLINIC_DOCTOR_ID: ${CLINIC_DOCTOR_ID}
     depends_on:
       - doctor-db
     networks:
@@ -92,6 +94,7 @@ services:
       DB_PASS: ${DB_PASS}
       RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672
       DOCTOR_SERVICE_URL: http://doctor-service:3002
+      CLINIC_DOCTOR_ID: ${CLINIC_DOCTOR_ID}
     depends_on:
       - appointment-db
       - rabbitmq

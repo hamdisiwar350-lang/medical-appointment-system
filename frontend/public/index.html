@@ -3,77 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Système de rendez-vous médicaux</title>
+  <meta name="theme-color" content="#07525a">
+  <title>Connexion — Cabinet Dentaire</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dental-theme.css">
 </head>
-<body>
-  <div class="container">
-    <div class="lang-switch">
-      <button class="lang-btn" data-lang="fr">FR</button>
-      <button class="lang-btn" data-lang="ar">عربي</button>
-    </div>
+<body class="auth-page">
+  <main class="auth-shell">
+    <aside class="auth-visual">
+      <div class="auth-brand-mark" data-icon="tooth" data-size="42"></div>
+      <div class="auth-brand-copy"><strong data-i18n="sidebarBrandLine1"></strong><span data-i18n="sidebarBrandLine2"></span></div>
+      <div class="auth-visual-copy">
+        <span class="auth-kicker" data-i18n="authKicker"></span>
+        <h1 data-i18n="authHeadline"></h1>
+        <p data-i18n="authSubtitle"></p>
+      </div>
+      <div class="auth-visual-orbit orbit-one"></div>
+      <div class="auth-visual-orbit orbit-two"></div>
+      <div class="auth-tooth-decoration" data-icon="tooth" data-size="190"></div>
+      <div class="auth-visual-footer" data-i18n="authFooter"></div>
+    </aside>
 
-    <div class="brand">
-      <span class="logo-badge" data-icon="cross" data-size="26"></span>
-      <h1 data-i18n="appTitle"></h1>
-    </div>
-    <p class="subtitle" data-i18n="appSubtitle"></p>
+    <section class="auth-form-side">
+      <div class="auth-form-top">
+        <div class="lang-switch inline">
+          <button class="lang-btn" data-lang="fr">FR</button>
+          <button class="lang-btn" data-lang="ar">عربي</button>
+        </div>
+        <span class="auth-secure-label"><span></span><span data-i18n="authSecureLabel"></span></span>
+      </div>
 
-    <p class="role-label" data-i18n="roleQuestion"></p>
-    <div class="role-toggle">
-      <button type="button" class="role-btn active" data-role="patient">
-        <span data-icon="user" data-size="22"></span><span data-i18n="rolePatient"></span>
-      </button>
-      <button type="button" class="role-btn" data-role="doctor">
-        <span data-icon="stethoscope" data-size="22"></span><span data-i18n="roleDoctor"></span>
-      </button>
-    </div>
+      <div class="auth-form-content">
+        <p class="auth-form-kicker" data-i18n="authWelcome"></p>
+        <h2 data-i18n="tabLogin"></h2>
+        <p class="auth-form-subtitle" data-i18n="authFormSubtitle"></p>
 
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="login" data-i18n="tabLogin"></button>
-      <button class="tab-btn" data-tab="register" data-i18n="tabRegister"></button>
-    </div>
-
-    <div id="loginPanel" class="form-panel active">
-      <form id="loginForm">
-        <label data-i18n="labelEmail"></label>
-        <input type="email" id="loginEmail" placeholder="name@example.com" required>
-        <label data-i18n="labelPassword"></label>
-        <input type="password" id="loginPassword" data-i18n-placeholder="placeholderPassword" required>
-        <a href="#" class="forgot-link" data-i18n="forgotPassword"></a>
-        <div id="loginError" class="error"></div>
-        <button type="submit" class="submit-btn" data-i18n="btnLogin"></button>
-      </form>
-    </div>
-
-    <div id="registerPanel" class="form-panel">
-      <form id="registerForm">
-        <label data-i18n="labelFullName"></label>
-        <input type="text" id="regName" data-i18n-placeholder="placeholderFullName" required>
-        <label data-i18n="labelEmail"></label>
-        <input type="email" id="regEmail" placeholder="name@example.com" required>
-        <label data-i18n="labelPassword"></label>
-        <input type="password" id="regPassword" data-i18n-placeholder="placeholderPassword" required>
-
-        <div id="specialtyField" style="display:none;">
-          <label data-i18n="labelSpecialty"></label>
-          <select id="regSpecialty">
-            <option value="طب عام" data-i18n="specialtyGeneral"></option>
-            <option value="أمراض القلب" data-i18n="specialtyCardio"></option>
-            <option value="الأمراض الجلدية" data-i18n="specialtyDerma"></option>
-            <option value="طب الأطفال" data-i18n="specialtyPediatrics"></option>
-            <option value="طب العيون" data-i18n="specialtyOphthalmology"></option>
-          </select>
+        <div class="tabs auth-tabs">
+          <button class="tab-btn active" data-tab="login" data-i18n="tabLogin"></button>
+          <button class="tab-btn" data-tab="register" data-i18n="tabRegister"></button>
         </div>
 
-        <div id="registerError" class="error"></div>
-        <div id="registerSuccess" class="success"></div>
-        <button type="submit" class="submit-btn" data-i18n="btnRegister"></button>
-      </form>
-    </div>
+        <div id="loginPanel" class="form-panel active">
+          <form id="loginForm" class="auth-form">
+            <label for="loginEmail" data-i18n="labelEmail"></label>
+            <input type="email" id="loginEmail" placeholder="name@example.com" autocomplete="username" required>
+            <label for="loginPassword" data-i18n="labelPassword"></label>
+            <input type="password" id="loginPassword" data-i18n-placeholder="placeholderPassword" autocomplete="current-password" required>
+            <a href="#" class="forgot-link" data-i18n="forgotPassword" onclick="return false"></a>
+            <div id="loginError" class="error" role="alert"></div>
+            <button type="submit" class="submit-btn" data-i18n="btnLogin"></button>
+          </form>
+        </div>
 
-    <p class="footer-note" data-i18n="footerNote"></p>
-  </div>
+        <div id="registerPanel" class="form-panel">
+          <form id="registerForm" class="auth-form">
+            <label for="regName" data-i18n="labelFullName"></label>
+            <input type="text" id="regName" data-i18n-placeholder="placeholderFullName" autocomplete="name" required>
+            <label for="regEmail" data-i18n="labelEmail"></label>
+            <input type="email" id="regEmail" placeholder="name@example.com" autocomplete="email" required>
+            <label for="regPassword" data-i18n="labelPassword"></label>
+            <input type="password" id="regPassword" data-i18n-placeholder="placeholderPassword" autocomplete="new-password" minlength="6" required>
+            <div id="registerError" class="error" role="alert"></div>
+            <div id="registerSuccess" class="success" role="status"></div>
+            <button type="submit" class="submit-btn" data-i18n="btnRegister"></button>
+          </form>
+        </div>
+        <p class="auth-bottom-note" data-i18n="footerNote"></p>
+      </div>
+    </section>
+  </main>
 
   <script src="js/translations.js"></script>
   <script src="js/i18n.js"></script>

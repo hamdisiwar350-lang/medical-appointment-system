@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#073d42">
+  <title>Assistant · Clinique Dentaire</title>
+  <link rel="stylesheet" href="css/assistant-figma.css?v=20261126-v9">
+</head>
+<body>
+  <div class="app-shell assistant-app-shell">
+    <aside class="sidebar assistant-sidebar" id="assistantSidebar" aria-label="Navigation assistant">
+      <button class="mobile-close" id="assistantSidebarClose" type="button" aria-label="Close menu">×</button>
+
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 3c1.7-.7 3 .5 4.5.5s2.8-1.2 4.5-.5c3.8 1.5 3.3 7 1.8 10.3-1.1 2.3-1.4 7.7-3.3 7.7-1.8 0-1.3-5.8-3-5.8S10.8 21 9 21c-1.9 0-2.2-5.4-3.3-7.7C4.2 10 3.7 4.5 7.5 3Z"/></svg>
+        </div>
+        <div><strong data-t="clinicName">Clinique Dentaire Lina</strong><span data-t="clinicSubtitle">Espace de soins privé</span></div>
+      </div>
+
+      <div class="clinic-pill"><span class="status-dot"></span><span data-t="clinicOpen">Cabinet ouvert</span></div>
+      <p class="nav-label" data-t="spaceLabel">ESPACE</p>
+
+      <nav aria-label="Assistant workspace">
+        <button type="button" class="nav-item active" data-nav-target="dashboardSection">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+          <span data-t="navDashboard">Tableau de bord</span><span class="active-pip"></span>
+        </button>
+        <button type="button" class="nav-item" data-nav-target="agendaSection">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+          <span data-t="navAgenda">Agenda</span>
+        </button>
+        <button type="button" class="nav-item" data-nav-target="waitingSection">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <span data-t="navWaiting">File d’attente</span>
+        </button>
+        <button type="button" class="nav-item" data-nav-target="patientsSection">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+          <span data-t="navPatients">Patients</span>
+        </button>
+        <button type="button" class="nav-item" data-nav-target="walkInSection">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2M19 8v8M15 12h8"/></svg>
+          <span data-t="navWalkIn">Patient sans RDV</span>
+        </button>
+        <button type="button" class="nav-item" data-nav-target="requestsSection" id="assistantRequestsNav">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 13h6M9 17h6"/></svg>
+          <span data-t="navRequests">Demandes</span>
+          <span class="count" id="assistantPendingNavCount">0</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="support-card">
+          <span class="support-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"/></svg>
+          </span>
+          <strong data-t="supportTitle">Besoin d’aide ?</strong>
+          <small data-t="supportText">Notre équipe vous répond</small>
+          <button type="button" data-nav-target="walkInSection" data-t="supportButton">Voir l’accueil</button>
+        </div>
+        <div class="profile-mini">
+          <div class="avatar" id="assistantAvatar">A</div>
+          <div><strong id="assistantName">Assistant</strong><span data-t="assistantRole">Assistante du cabinet</span></div>
+          <button type="button" class="profile-logout" id="assistantLogout" title="Se déconnecter" aria-label="Se déconnecter">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17l5-5-5-5M15 12H3M21 3v18"/></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="topbar">
+        <button class="mobile-menu" id="assistantMobileMenu" type="button" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <div class="topbar-context"><span class="context-dot"></span><span data-t="topbarLabel">ESPACE ASSISTANT</span></div>
+        <div class="top-actions">
+          <label class="search assistant-top-search">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+            <input id="assistantGlobalSearch" type="search" data-placeholder="searchPlaceholder" placeholder="Rechercher un patient, un rendez-vous…" autocomplete="off">
+          </label>
+          <button class="lang-toggle" id="assistantLanguageToggle" type="button" aria-label="Change language">AR</button>
+          <button class="icon-button notification" id="assistantNotificationsButton" type="button" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span></span>
+          </button>
+          <div class="top-avatar" id="assistantTopAvatar">A</div>
+        </div>
+      </header>
+
+      <main>
+        <section class="welcome-row" id="dashboardSection">
+          <div>
+            <p class="eyebrow" id="assistantWelcomeEyebrow">ACCUEIL</p>
+            <h1><span data-t="hello">Bonjour</span>, <span id="assistantGreetingName">Assistant</span></h1>
+            <p data-t="welcomeDescription">Voici l’activité du cabinet aujourd’hui.</p>
+          </div>
+          <button class="primary assistant-welcome-button" type="button" data-nav-target="walkInSection">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            <span data-t="walkInCta">Patient sans rendez-vous</span>
+          </button>
+        </section>
+
+        <section class="stats-grid assistant-stats" aria-label="Statistiques du cabinet">
+          <div class="stat-card"><div class="stat-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></div><div><span class="stat-label" data-t="statAppointments">Rendez-vous</span><strong class="stat-value" id="assistantStatToday">—</strong><small class="stat-trend" id="assistantStatTodayHint"></small></div></div>
+          <div class="stat-card"><div class="stat-icon purple"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div><span class="stat-label" data-t="statWaiting">En salle d’attente</span><strong class="stat-value" id="assistantStatWaiting">—</strong><small class="stat-trend" data-t="statWaitingHint">Présences enregistrées</small></div></div>
+          <div class="stat-card"><div class="stat-icon orange"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 13h6M9 17h4"/></svg></div><div><span class="stat-label" data-t="statRequests">Demandes en attente</span><strong class="stat-value" id="assistantStatPending">—</strong><small class="stat-trend" data-t="statRequestsHint">À confirmer</small></div></div>
+          <div class="stat-card"><div class="stat-icon blue"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg></div><div><span class="stat-label" data-t="statConfirmed">Patients confirmés</span><strong class="stat-value" id="assistantStatConfirmed">—</strong><small class="stat-trend" data-t="statConfirmedHint">Aujourd’hui</small></div></div>
+        </section>
+
+        <section class="assistant-layout assistant-dashboard-layout" aria-label="Agenda and reception">
+          <div class="calendar-card card" id="weekCalendarCard">
+            <div class="card-head">
+              <div><h3 data-t="weekTitle">Agenda de la semaine</h3><p id="assistantWeekRange">—</p></div>
+              <div class="head-actions">
+                <button class="ghost" id="assistantCalendarToday" type="button" data-t="todayButton">Aujourd’hui</button>
+                <button class="icon-button" id="assistantWeekPrev" type="button" aria-label="Previous week"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+                <button class="icon-button" id="assistantWeekNext" type="button" aria-label="Next week"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+              </div>
+            </div>
+            <div class="calendar-wrap">
+              <div class="calendar-grid" id="assistantCalendarGrid">
+                <div class="time-head"></div>
+                <div class="day-head"><span>—</span><strong>—</strong></div>
+                <div class="times"><span>08:00</span><span>10:00</span><span>12:00</span><span>14:00</span><span>16:00</span></div>
+                <div class="schedule-field"></div>
+              </div>
+            </div>
+            <p class="assistant-calendar-note" id="assistantCalendarHint" data-t="calendarHint">Sélectionnez un jour ou un rendez-vous pour afficher la liste correspondante.</p>
+          </div>
+
+          <aside class="right-stack">
+            <div class="queue-card card">
+              <div class="card-head"><div><h3 data-t="queueTitle">File d’attente</h3><p data-t="queueSubtitle">Mise à jour depuis l’accueil</p></div><span class="live"><i></i><span data-t="liveLabel">LIVE</span></span></div>
+              <div id="assistantQueuePreview" class="assistant-queue-list"><div class="assistant-queue-empty" data-t="loading">Chargement…</div></div>
+              <button class="text-button centered" type="button" data-nav-target="waitingSection"><span data-t="openQueue">Ouvrir la file d’attente</span></button>
+            </div>
+
+            <div class="requests-card card" id="requestsPreviewCard">
+              <div class="card-head"><h3 data-t="requestsTitle">Demandes en attente</h3><span class="count" id="assistantRequestsCount">0</span></div>
+              <div id="assistantRequestsPreview"><div class="assistant-queue-empty" data-t="loading">Chargement…</div></div>
+              <button class="ghost wide" type="button" id="assistantSeeRequests" data-t="seeRequests">Voir toutes les demandes</button>
+            </div>
+          </aside>
+        </section>
+
+        <section class="assistant-section" id="agendaSection">
+          <div class="assistant-section-head"><div><h2 data-t="agendaTitle">Agenda du cabinet</h2><p data-t="agendaDescription">Les noms des patients ouvrent leur fiche administrative.</p></div><span class="assistant-panel-count" id="assistantAgendaCount">0</span></div>
+          <div class="assistant-panel card">
+            <div class="assistant-section-toolbar">
+              <div class="assistant-search"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="assistantAppointmentSearch" type="search" data-placeholder="searchPatient" placeholder="Rechercher un patient…"></div>
+              <div class="assistant-filter-row" id="assistantAppointmentFilter">
+                <button type="button" class="pill active" data-filter="today" data-t="todayFilter">Aujourd’hui</button>
+                <button type="button" class="pill" data-filter="upcoming" data-t="upcomingFilter">À venir</button>
+                <button type="button" class="pill" data-filter="all" data-t="allFilter">Tous</button>
+              </div>
+            </div>
+            <div class="assistant-table-wrap"><table class="assistant-table"><thead><tr><th data-t="patientColumn">Patient</th><th data-t="dateColumn">Date et heure</th><th data-t="statusColumn">Statut</th><th data-t="actionsColumn">Actions</th><th data-t="checkinColumn">Accueil</th></tr></thead><tbody id="assistantAppointmentBody"><tr><td colspan="5" class="empty" data-t="loading">Chargement…</td></tr></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="assistant-section" id="waitingSection">
+          <div class="assistant-section-head"><div><h2 data-t="waitingTitle">Salle d’attente</h2><p data-t="waitingDescription">Les arrivées enregistrées au cabinet, par ordre d’arrivée.</p></div><span class="assistant-panel-count" id="assistantWaitingCount">0</span></div>
+          <div class="assistant-panel card"><div class="assistant-table-wrap"><table class="assistant-table"><thead><tr><th data-t="patientColumn">Patient</th><th data-t="arrivalColumn">Arrivée</th><th data-t="appointmentColumn">Rendez-vous</th><th data-t="queueStatusColumn">État</th></tr></thead><tbody id="assistantWaitingBody"><tr><td colspan="4" class="empty" data-t="loading">Chargement…</td></tr></tbody></table></div><p class="assistant-walkin-hint" data-t="queuePermissionHint">L’assistante enregistre les arrivées. Seul le dentiste appelle le patient suivant et démarre la consultation.</p></div>
+        </section>
+
+        <section class="assistant-section" id="patientsSection">
+          <div class="assistant-section-head"><div><h2 data-t="patientsTitle">Patients du cabinet</h2><p data-t="patientsDescription">Liste administrative extraite des rendez-vous du cabinet.</p></div><span class="assistant-panel-count" id="assistantPatientCount">0</span></div>
+          <div class="assistant-patient-grid" id="assistantPatientGrid"><div class="assistant-panel card assistant-queue-empty" data-t="loading">Chargement…</div></div>
+        </section>
+
+        <section class="assistant-section" id="walkInSection">
+          <div class="assistant-section-head"><div><h2 data-t="walkInTitle">Patient sans rendez-vous</h2><p data-t="walkInDescription">Enregistrer une personne présente au cabinet et l’ajouter à la salle d’attente.</p></div></div>
+          <div class="assistant-walkin-grid">
+            <div class="assistant-panel card">
+              <form class="assistant-walkin-form" id="assistantWalkInForm">
+                <label><span data-t="patientNameLabel">Nom complet du patient</span><input id="walkInPatientName" name="patientName" type="text" maxlength="255" autocomplete="name" required></label>
+                <label><span data-t="patientEmailLabel">Adresse e-mail</span><input id="walkInPatientEmail" name="patientEmail" type="email" maxlength="255" autocomplete="email" required></label>
+                <div class="form-footer"><button class="primary" type="submit" id="assistantWalkInSubmit"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span data-t="addToQueue">Ajouter à la salle d’attente</span></button><span class="assistant-form-message" id="assistantWalkInMessage" role="status" aria-live="polite"></span></div>
+              </form>
+            </div>
+            <div class="assistant-panel card"><h3 data-t="walkInInfoTitle">À l’accueil</h3><p class="assistant-walkin-hint" data-t="walkInInfoText">Le patient sera ajouté comme rendez-vous sans compte de connexion. L’assistante peut enregistrer son arrivée, mais seul le dentiste gère le passage en consultation.</p></div>
+          </div>
+        </section>
+
+        <section class="assistant-section" id="requestsSection">
+          <div class="assistant-section-head"><div><h2 data-t="requestsTitle">Demandes en attente</h2><p data-t="requestsDescription">Les rendez-vous qui nécessitent une confirmation.</p></div><span class="assistant-panel-count" id="assistantPendingCount">0</span></div>
+          <div class="assistant-panel card"><div class="assistant-table-wrap"><table class="assistant-table"><thead><tr><th data-t="patientColumn">Patient</th><th data-t="dateColumn">Date et heure</th><th data-t="statusColumn">Statut</th><th data-t="actionsColumn">Actions</th></tr></thead><tbody id="assistantRequestsBody"><tr><td colspan="4" class="empty" data-t="loading">Chargement…</td></tr></tbody></table></div></div>
+        </section>
+
+        <p class="assistant-privacy"> <span data-t="privacyNote">Espace administratif sécurisé · Les dossiers médicaux et les notes cliniques restent réservés au dentiste.</span></p>
+      </main>
+    </div>
+    <button class="sidebar-scrim" id="assistantSidebarScrim" type="button" aria-label="Close menu" hidden></button>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/assistant-dashboard-figma.js?v=20261126-v9"></script>
+</body>
+</html>

@@ -1,15 +1,3 @@
-let selectedRole = 'patient';
-
-document.querySelectorAll('.role-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedRole = btn.dataset.role;
-    document.getElementById('specialtyField').style.display =
-      selectedRole === 'doctor' ? 'block' : 'none';
-  });
-});
-
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -18,6 +6,13 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.getElementById(btn.dataset.tab + 'Panel').classList.add('active');
   });
 });
+
+function dashboardPathForRole(role) {
+  if (role === 'doctor') return 'doctor-dashboard.html';
+  if (role === 'assistant') return 'assistant-dashboard.html';
+  if (role === 'patient') return 'dashboard.html';
+  return null;
+}
 
 function translateApiError(message) {
   if (message === 'Invalid credentials') return t('errorInvalidCredentials');
@@ -33,8 +28,14 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   errorBox.textContent = '';
   try {
     const data = await apiRequest('/auth/login', 'POST', { email, password }, false);
+    const destination = dashboardPathForRole(data.user?.role);
+
+    if (!destination) {
+      throw new Error(t('errorGeneric'));
+    }
+
     setSession(data.token, data.user);
-    window.location.href = data.user.role === 'doctor' ? 'doctor-dashboard.html' : 'dashboard.html';
+    window.location.href = destination;
   } catch (err) {
     errorBox.textContent = translateApiError(err.message);
   }
@@ -45,14 +46,12 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
   const name = document.getElementById('regName').value;
   const email = document.getElementById('regEmail').value;
   const password = document.getElementById('regPassword').value;
-  const specialty = document.getElementById('regSpecialty').value;
   const errorBox = document.getElementById('registerError');
   const successBox = document.getElementById('registerSuccess');
   errorBox.textContent = '';
   successBox.textContent = '';
 
-  const payload = { name, email, password, role: selectedRole };
-  if (selectedRole === 'doctor') payload.specialty = specialty;
+  const payload = { name, email, password };
 
   try {
     await apiRequest('/auth/register', 'POST', payload, false);
@@ -65,5 +64,12 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
 
 if (getToken()) {
   const user = getUser();
-  window.location.href = user?.role === 'doctor' ? 'doctor-dashboard.html' : 'dashboard.html';
+  const destination = dashboardPathForRole(user?.role);
+
+  if (destination) {
+    window.location.href = destination;
+  } else {
+    clearSession();
+    window.location.href = 'index.html';
+  }
 }

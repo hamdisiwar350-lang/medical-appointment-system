@@ -1,0 +1,63 @@
+.fd-dashboard-welcome { align-items: flex-end; }
+.fd-dashboard-date { color: var(--fd-muted); font-size: 10px; text-transform: capitalize; }
+.fd-next-patient-panel {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 25px 26px;
+  min-height: 160px;
+  margin-top: 4px;
+  border-color: #e4e2f3;
+  background: linear-gradient(115deg, #fff 0%, #fff 65%, #f5f2ff 100%);
+}
+.fd-next-patient-panel.is-empty { background: #fff; }
+.fd-next-patient-avatar {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 17px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  background: linear-gradient(145deg, #23b9ad, #6e5ce5);
+  box-shadow: 0 8px 18px rgba(88, 88, 180, .16);
+}
+.fd-next-patient-info { min-width: 0; }
+.fd-next-patient-info .fd-eyebrow { margin-bottom: 7px; }
+.fd-next-patient-info h2 { margin: 0; color: var(--fd-ink); font-size: clamp(18px, 2vw, 23px); font-weight: 650; }
+.fd-next-patient-info > p:not(.fd-eyebrow) { margin: 7px 0 9px; color: var(--fd-muted); font-size: 11px; }
+.fd-next-patient-info .fd-status { margin-top: 3px; }
+.fd-next-patient-actions { display: flex; flex-direction: column; align-items: stretch; gap: 9px; min-width: 190px; }
+.fd-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 13px;
+  color: #5f55b4;
+  font-size: 9px;
+  font-weight: 700;
+  border: 1px solid #ded9fb;
+  border-radius: 9px;
+  background: #f8f6ff;
+  white-space: nowrap;
+}
+.fd-secondary:hover { background: #efecff; }
+.fd-dashboard-message {
+  grid-column: 2 / -1;
+  margin-top: -4px;
+  color: #8992a5;
+  font-size: 9px;
+  line-height: 1.5;
+}
+@media (max-width: 760px) {
+  .fd-dashboard-welcome { align-items: flex-start; }
+  .fd-next-patient-panel { grid-template-columns: auto minmax(0, 1fr); padding: 18px; gap: 13px; }
+  .fd-next-patient-avatar { width: 50px; height: 50px; }
+  .fd-next-patient-actions { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; min-width: 0; }
+  .fd-dashboard-message { grid-column: 1 / -1; margin-top: 0; }
+}
+@media (max-width: 420px) {
+  .fd-next-patient-actions { grid-template-columns: 1fr; }
+}

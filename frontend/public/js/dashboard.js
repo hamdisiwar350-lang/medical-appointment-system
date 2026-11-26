@@ -1,220 +1,247 @@
-const user = getUser();
-if (!getToken() || !user) window.location.href = 'index.html';
+const patientUser = getUser();
 
-document.getElementById('logoutBtn').addEventListener('click', () => {
-  clearSession();
-  window.location.href = 'index.html';
-});
-
-let allDoctors = [];
-let allAppointmentsCache = [];
-let activeSpecialty = 'all';
-let selectedSlot = null;
-
-const dateInput = document.getElementById('appointmentDateInput');
-dateInput.min = new Date().toISOString().slice(0, 10);
-
-function renderWelcome() {
-  document.getElementById('welcomeTitle').textContent = t('welcomeGreeting', { name: user.name });
+function patientDashboardForRole(role) {
+  if (role === 'doctor') return 'doctor-dashboard.html';
+  if (role === 'assistant') return 'assistant-dashboard.html';
+  if (role === 'patient') return 'dashboard.html';
+  return 'index.html';
 }
 
-async function loadSpecialtiesFilter() {
-  try {
-    const data = await apiRequest('/doctors/specialties');
-    window._specialtiesRaw = data.specialties;
-    renderSpecialtyFilter();
-  } catch (err) {
-    document.getElementById('specialtyFilter').innerHTML = '';
-  }
-}
+if (!getToken() || !patientUser || patientUser.role !== 'patient') {
+  window.location.replace(
+    patientUser ? patientDashboardForRole(patientUser.role) : 'index.html'
+  );
+} else {
+  let clinicDentist = null;
+  let appointments = [];
+  let selectedSlot = null;
 
-function renderSpecialtyFilter() {
-  const filterBox = document.getElementById('specialtyFilter');
-  const specialties = window._specialtiesRaw || [];
-  filterBox.innerHTML = '';
+  const dateInput = document.getElementById('appointmentDateInput');
+  const slotsContainer = document.getElementById('slotsContainer');
+  const bookForm = document.getElementById('bookForm');
+  const bookMessage = document.getElementById('bookMessage');
 
-  const allBtn = document.createElement('button');
-  allBtn.className = 'pill' + (activeSpecialty === 'all' ? ' active' : '');
-  allBtn.textContent = t('filterAll');
-  allBtn.dataset.specialty = 'all';
-  filterBox.appendChild(allBtn);
-
-  specialties.forEach(spec => {
-    const btn = document.createElement('button');
-    btn.className = 'pill' + (activeSpecialty === spec ? ' active' : '');
-    btn.textContent = translateSpecialty(spec);
-    btn.dataset.specialty = spec;
-    filterBox.appendChild(btn);
-  });
-
-  filterBox.querySelectorAll('.pill').forEach(btn => {
-    btn.addEventListener('click', () => {
-      activeSpecialty = btn.dataset.specialty;
-      renderSpecialtyFilter();
-      renderDoctors();
-    });
-  });
-}
-
-function renderDoctors() {
-  const list = document.getElementById('doctorsList');
-  const select = document.getElementById('doctorSelect');
-  const previousSelection = select.value;
-  const filtered = activeSpecialty === 'all'
-    ? allDoctors
-    : allDoctors.filter(d => d.specialty === activeSpecialty);
-
-  list.innerHTML = filtered.length === 0 ? `<p>${t('noDoctorsForSpecialty')}</p>` : '';
-  select.innerHTML = `<option value="">${t('selectDoctorPlaceholder')}</option>`;
-
-  filtered.forEach(doc => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <h3>${escapeHtml(doc.name)}</h3>
-      <p>${t('specialtyFieldLabel')} ${escapeHtml(translateSpecialty(doc.specialty))}</p>
-      <p>${t('emailFieldLabel')} ${escapeHtml(doc.email)}</p>
-      <p>${t('hoursFieldLabel')} ${doc.availableFrom} - ${doc.availableTo}</p>`;
-    list.appendChild(card);
-
-    const opt = document.createElement('option');
-    opt.value = doc.id;
-    opt.textContent = `${doc.name} - ${translateSpecialty(doc.specialty)}`;
-    select.appendChild(opt);
-  });
-
-  if ([...select.options].some(o => o.value === previousSelection)) {
-    select.value = previousSelection;
-  }
-}
-
-async function loadDoctors() {
-  const list = document.getElementById('doctorsList');
-  list.innerHTML = `<p>${t('loading')}</p>`;
-  try {
-    const data = await apiRequest('/doctors');
-    allDoctors = data.doctors;
-    renderDoctors();
-  } catch (err) {
-    list.innerHTML = `<p class="error">${escapeHtml(err.message)}</p>`;
-  }
-}
-
-async function loadAvailability() {
-  const doctorId = document.getElementById('doctorSelect').value;
-  const date = dateInput.value;
-  const container = document.getElementById('slotsContainer');
-  selectedSlot = null;
-
-  if (!doctorId || !date) {
-    container.innerHTML = `<p class="slot-hint">${t('slotHint')}</p>`;
-    return;
+  function localDateValue(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
-  container.innerHTML = `<p class="slot-hint">${t('slotLoading')}</p>`;
-  try {
-    const data = await apiRequest(`/appointments/availability?doctorId=${doctorId}&date=${date}`);
-    if (!data.slots || data.slots.length === 0) {
-      container.innerHTML = `<p class="slot-empty">${data.message || t('slotEmptyDefault')}</p>`;
+  function renderPatientProfile() {
+    const name = patientUser.name || '';
+    document.getElementById('patientName').textContent = name;
+    document.getElementById('patientAvatar').textContent =
+      name.trim().charAt(0).toUpperCase() || 'P';
+    document.getElementById('patientWelcome').textContent =
+      t('welcomeGreeting', { name });
+    document.getElementById('patientTodayDate').textContent =
+      new Date().toLocaleDateString(localeTag(), {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+      });
+  }
+
+  function showBookingMessage(message, type = '') {
+    bookMessage.textContent = message;
+    bookMessage.className = `booking-message ${type}`.trim();
+  }
+
+  function renderClinicDentist() {
+    if (!clinicDentist) return;
+    document.getElementById('clinicDentistName').textContent = clinicDentist.name || t('dentistRoleLabel');
+    document.getElementById('clinicDentistDescription').textContent = t('patientDentistCardDescription');
+    document.getElementById('clinicHours').textContent =
+      `${clinicDentist.availableFrom || '09:00'} – ${clinicDentist.availableTo || '17:00'}`;
+    document.getElementById('clinicPhone').textContent = clinicDentist.phone || t('patientPhoneNotProvided');
+  }
+
+  async function loadClinicDentist() {
+    try {
+      clinicDentist = await apiRequest('/doctors/clinic');
+      renderClinicDentist();
+    } catch (error) {
+      document.getElementById('clinicDentistName').textContent = t('patientClinicUnavailable');
+      showBookingMessage(t('patientClinicUnavailable'), 'error');
+      console.error('Clinic dentist profile:', error);
+    }
+  }
+
+  function clearSlots(messageKey = 'patientChooseDateHint') {
+    selectedSlot = null;
+    slotsContainer.innerHTML = '';
+    const hint = document.createElement('p');
+    hint.className = 'slot-hint';
+    hint.textContent = t(messageKey);
+    slotsContainer.appendChild(hint);
+  }
+
+  async function loadAvailability() {
+    const date = dateInput.value;
+    clearSlots('patientSlotsLoading');
+    if (!date) {
+      clearSlots();
       return;
     }
-    container.innerHTML = '';
-    data.slots.forEach(slot => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'slot-btn';
-      btn.textContent = slot;
-      btn.addEventListener('click', () => {
-        container.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        selectedSlot = slot;
+
+    try {
+      const offset = new Date(`${date}T12:00:00`).getTimezoneOffset();
+      const data = await apiRequest(
+        `/appointments/availability?date=${encodeURIComponent(date)}&timezoneOffset=${offset}`
+      );
+
+      slotsContainer.innerHTML = '';
+      if (!Array.isArray(data.slots) || data.slots.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'slot-empty';
+        empty.textContent = data.message || t('slotEmptyDefault');
+        slotsContainer.appendChild(empty);
+        return;
+      }
+
+      data.slots.forEach(slot => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'clinic-slot';
+        button.textContent = slot;
+        button.setAttribute('aria-pressed', 'false');
+        button.addEventListener('click', () => {
+          slotsContainer.querySelectorAll('.clinic-slot').forEach(item => {
+            item.classList.remove('selected');
+            item.setAttribute('aria-pressed', 'false');
+          });
+          button.classList.add('selected');
+          button.setAttribute('aria-pressed', 'true');
+          selectedSlot = slot;
+        });
+        slotsContainer.appendChild(button);
       });
-      container.appendChild(btn);
+    } catch (error) {
+      slotsContainer.innerHTML = '';
+      const message = document.createElement('p');
+      message.className = 'slot-empty';
+      message.textContent = error.message || t('patientAvailabilityError');
+      slotsContainer.appendChild(message);
+    }
+  }
+
+  function renderAppointments() {
+    const body = document.getElementById('appointmentsBody');
+    const count = document.getElementById('patientAppointmentCount');
+    const sorted = [...appointments].sort(
+      (a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate)
+    );
+    count.textContent = String(sorted.length);
+
+    if (!sorted.length) {
+      body.innerHTML = `<tr><td colspan="3" class="empty">${escapeHtml(t('patientEmptyAppointments'))}</td></tr>`;
+      return;
+    }
+
+    body.innerHTML = sorted.map(appointment => {
+      const date = new Date(appointment.appointmentDate).toLocaleString(localeTag(), {
+        weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+      const reason = appointment.notes || t('patientGeneralVisit');
+      return `
+        <tr>
+          <td><strong>${escapeHtml(date)}</strong></td>
+          <td>${escapeHtml(reason)}</td>
+          <td><span class="badge badge-${escapeHtml(appointment.status)}">${escapeHtml(translateStatus(appointment.status))}</span></td>
+        </tr>`;
+    }).join('');
+  }
+
+  async function loadAppointments() {
+    const body = document.getElementById('appointmentsBody');
+    try {
+      const data = await apiRequest('/appointments');
+      appointments = Array.isArray(data.appointments) ? data.appointments : [];
+      renderAppointments();
+    } catch (error) {
+      body.innerHTML = `<tr><td colspan="3" class="empty">${escapeHtml(error.message)}</td></tr>`;
+    }
+  }
+
+  async function bookAppointment(event) {
+    event.preventDefault();
+    if (!clinicDentist) {
+      showBookingMessage(t('patientClinicUnavailable'), 'error');
+      return;
+    }
+
+    const date = dateInput.value;
+    const reason = document.getElementById('appointmentReason').value;
+    const note = document.getElementById('appointmentNotes').value.trim();
+
+    if (!date || !reason || !selectedSlot) {
+      showBookingMessage(t('bookErrorMissing'), 'error');
+      return;
+    }
+
+    // Convert the selected clinic-local time to UTC before sending it to the API.
+    const localAppointmentDate = new Date(`${date}T${selectedSlot}:00`);
+    const appointmentDate = localAppointmentDate.toISOString();
+    const notes = note ? `${reason} — ${note}` : reason;
+    const submitButton = bookForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    showBookingMessage(t('patientBookingSubmitting'), '');
+
+    try {
+      await apiRequest('/appointments', 'POST', {
+        patientName: patientUser.name,
+        appointmentDate,
+        notes
+      });
+      showBookingMessage(t('bookSuccess'), 'success');
+      bookForm.reset();
+      selectedSlot = null;
+      clearSlots();
+      await loadAppointments();
+    } catch (error) {
+      showBookingMessage(
+        error.message === 'This time slot is no longer available'
+          ? t('bookErrorSlotTaken')
+          : error.message,
+        'error'
+      );
+      await loadAvailability();
+    } finally {
+      submitButton.disabled = false;
+    }
+  }
+
+  function initPatientDashboard() {
+    dateInput.min = localDateValue();
+    dateInput.addEventListener('change', loadAvailability);
+    dateInput.addEventListener('input', loadAvailability);
+    bookForm.addEventListener('submit', bookAppointment);
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      clearSession();
+      window.location.href = 'index.html';
     });
-  } catch (err) {
-    container.innerHTML = `<p class="slot-empty">${escapeHtml(err.message)}</p>`;
-  }
-}
 
-document.getElementById('doctorSelect').addEventListener('change', loadAvailability);
-dateInput.addEventListener('change', loadAvailability);
-dateInput.addEventListener('input', loadAvailability);
-
-function renderAppointments() {
-  const list = document.getElementById('appointmentsList');
-  const mine = allAppointmentsCache.filter(a => a.patientId === user.id);
-  list.innerHTML = mine.length === 0 ? `<p>${t('noAppointmentsYet')}</p>` : '';
-  mine.forEach(appt => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <h3>${t('withDoctorPrefix')} ${escapeHtml(appt.doctorName)}</h3>
-      <p>${t('dateFieldLabel')} ${new Date(appt.appointmentDate).toLocaleString(localeTag())}</p>
-      <p>${t('statusFieldLabel')} <span class="status-${appt.status}">${translateStatus(appt.status)}</span></p>
-      <p>${t('notesFieldLabel')} ${escapeHtml(appt.notes) || '-'}</p>`;
-    list.appendChild(card);
-  });
-}
-
-async function loadAppointments() {
-  const list = document.getElementById('appointmentsList');
-  list.innerHTML = `<p>${t('loading')}</p>`;
-  try {
-    const data = await apiRequest('/appointments');
-    allAppointmentsCache = data.appointments;
-    renderAppointments();
-  } catch (err) {
-    list.innerHTML = `<p class="error">${escapeHtml(err.message)}</p>`;
-  }
-}
-
-document.getElementById('bookForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const doctorId = document.getElementById('doctorSelect').value;
-  const date = dateInput.value;
-  const notes = document.getElementById('appointmentNotes').value;
-  const msgBox = document.getElementById('bookMessage');
-  msgBox.textContent = '';
-  msgBox.className = '';
-
-  if (!doctorId || !date || !selectedSlot) {
-    msgBox.textContent = t('bookErrorMissing');
-    msgBox.className = 'error';
-    return;
-  }
-
-  try {
-    await apiRequest('/appointments', 'POST', {
-      patientId: user.id,
-      patientName: user.name,
-      patientEmail: user.email,
-      doctorId,
-      appointmentDate: `${date}T${selectedSlot}:00.000Z`,
-      notes
+    document.getElementById('patientNav').addEventListener('click', event => {
+      const link = event.target.closest('a[href^="#"]');
+      if (!link) return;
+      document.querySelectorAll('#patientNav .nav-item').forEach(item => {
+        item.classList.toggle('active', item === link);
+      });
     });
-    msgBox.textContent = t('bookSuccess');
-    msgBox.className = 'success';
-    document.getElementById('bookForm').reset();
-    selectedSlot = null;
-    document.getElementById('slotsContainer').innerHTML = `<p class="slot-hint">${t('slotHint')}</p>`;
+
+    renderPatientProfile();
+    loadClinicDentist();
     loadAppointments();
-  } catch (err) {
-    msgBox.textContent = err.message === 'This time slot is no longer available'
-      ? t('bookErrorSlotTaken')
-      : err.message;
-    msgBox.className = 'error';
-    loadAvailability();
   }
-});
 
-window.onLanguageChange = () => {
-  renderWelcome();
-  renderSpecialtyFilter();
-  renderDoctors();
-  renderAppointments();
-};
+  window.onLanguageChange = () => {
+    renderPatientProfile();
+    renderClinicDentist();
+    renderAppointments();
+    if (dateInput.value) loadAvailability();
+    else clearSlots();
+  };
 
-renderWelcome();
-loadSpecialtiesFilter();
-loadDoctors();
-loadAppointments();
+  initPatientDashboard();
+}

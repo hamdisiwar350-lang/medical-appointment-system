@@ -1,72 +1,51 @@
-# 🏥 Système de rendez-vous médicaux
+# Cabinet Dentaire — application de gestion d'un cabinet privé
 
-Application de prise de rendez-vous médicaux basée sur une architecture microservices, avec authentification par rôle (patient / médecin), gestion des créneaux horaires et notifications asynchrones via RabbitMQ.
+Application de gestion pour **un seul cabinet dentaire avec un seul dentiste**. L'application comporte trois espaces : Patient, Assistante et Dentiste.
 
-Interface disponible en **français** et en **arabe** (bascule instantanée, support RTL).
+## Stack conservée
 
-## 📐 Architecture
+- Frontend : HTML, CSS et JavaScript vanilla servis par Nginx.
+- API Gateway : Node.js / Express / JWT.
+- Services : User, Doctor, Appointment et Notification.
+- Données : PostgreSQL avec Sequelize.
+- Événements asynchrones : RabbitMQ.
+- Exécution : Docker Compose.
 
-Chaque service dispose de sa propre base PostgreSQL. La communication est synchrone en HTTP (via Axios) entre services, et asynchrone via RabbitMQ pour les notifications.
+## Périmètre fonctionnel actuel
 
-## 🧰 Stack technique
+- **Patient** : inscription publique, consultation des informations du cabinet, demande de rendez-vous auprès du dentiste unique, consultation de ses propres rendez-vous et notifications.
+- **Assistante** : compte créé par le dentiste, accès aux rendez-vous du cabinet, confirmation ou annulation. Les réponses API destinées à l'assistante excluent les notes.
+- **Dentiste** : tableau de bord, agenda, liste des patients issue des rendez-vous, notifications et réglages du cabinet. Seul le dentiste peut marquer un rendez-vous comme terminé.
 
-- **Backend** : Node.js, Express, Sequelize
-- **Bases de données** : PostgreSQL (une par service)
-- **Message broker** : RabbitMQ
-- **Authentification** : JWT, bcrypt
-- **Frontend** : HTML / CSS / JavaScript vanilla, bilingue FR/AR
-- **Orchestration** : Docker Compose
+Les dossiers médicaux dentaires, l'odontogramme persistant, le check-in et la file d'attente complète nécessitent encore leurs modèles, règles métier et API dédiés. Ils ne sont pas simulés dans cette version.
 
-## 🚀 Démarrage rapide
+## Configuration initiale
 
-### Prérequis
-- Docker Desktop
+1. Copier `.env.example` vers `.env`.
+2. Renseigner `JWT_SECRET`, `DB_USER`, `DB_PASS`, `RABBITMQ_USER` et `RABBITMQ_PASS` avec des valeurs fortes.
+3. Renseigner `CLINIC_DOCTOR_ID` avec l'UUID du compte dentiste dans `user-db`. Le même UUID doit identifier son profil existant dans `doctor-db`.
+4. Ne jamais versionner `.env`, les fichiers SQL de sauvegarde ou `node_modules`.
 
-### Installation
+Si des secrets réels ont été inclus dans une archive partagée, les remplacer avant de remettre le système en service : JWT secret, mot de passe PostgreSQL et identifiants RabbitMQ.
 
-```bash
-git clone https://github.com/hamdisiwar350-lang/medical-appointment-system.git
-cd medical-appointment-system
-cp .env.example .env
-```
-
-Édite `.env` et renseigne de vraies valeurs (notamment `JWT_SECRET`), puis :
+## Démarrage
 
 ```bash
 docker compose up -d --build
 ```
 
-### Accès aux services
+Frontend : `http://127.0.0.1:8081`
+API Gateway : `http://127.0.0.1:8080/health`
 
-| Service | URL |
-|---|---|
-| Frontend | http://127.0.0.1:8081 |
-| API Gateway | http://127.0.0.1:8080 |
-| RabbitMQ Management | http://127.0.0.1:15672 |
+## Tests fournis
 
-> ⚠️ Sous Windows avec Docker Desktop, utilise `127.0.0.1` plutôt que `localhost` pour éviter un bug de résolution IPv6 connu.
+```bash
+bash test-api.sh
+bash test-concurrency.sh
+```
 
-## ✨ Fonctionnalités
+Les scripts utilisent le dentiste configuré et ne créent plus de faux profils médecins.
 
-- Inscription / connexion avec rôle **patient** ou **médecin**
-- Création automatique du profil médecin à l'inscription
-- Réservation de rendez-vous avec **créneaux horaires réels** (anti-double réservation)
-- Filtrage des médecins par spécialité
-- Tableau de bord médecin : statistiques, liste des rendez-vous du jour, confirmation/annulation
-- Notifications asynchrones via RabbitMQ à chaque nouveau rendez-vous
-- Interface bilingue français / arabe avec bascule RTL/LTR
+## Conservation des données existantes
 
-## 🔒 Sécurité
-
-- Secrets externalisés dans `.env` (non versionné)
-- Mots de passe hashés avec bcrypt
-- Validation des entrées côté serveur
-- Contrôle d'accès par rôle au niveau de l'API Gateway
-- Un médecin ne peut modifier que ses propres rendez-vous
-- Rate limiting anti brute-force sur la connexion
-
-## 📁 Structure du projet
-
-## 📄 Licence
-
-Projet personnel à but éducatif.
+Les profils de test et rendez-vous historiques ne sont pas supprimés automatiquement. L'API de consultation de l'application est limitée au dentiste configuré, sans effacer les données historiques des autres profils.
