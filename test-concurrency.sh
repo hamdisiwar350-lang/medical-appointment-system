@@ -1,61 +1,33 @@
-#!/bin/bash
-# Teste la concurrence : 10 reservations simultanees sur le meme creneau
-
+#!/usr/bin/env bash
+# Sends 10 simultaneous bookings for the same clinic-local slot.
+set -euo pipefail
 GATEWAY="http://127.0.0.1:8080"
-EMAIL="patient$RANDOM@test.com"
-DOC_EMAIL="doc$RANDOM@hopital.tn"
-PASSWORD="123456"
-
-get_field() {
-  echo "$1" | sed -E "s/.*\"$2\":\"?([^\",}]*)\"?.*/\1/"
-}
-
-echo "=== Setup: patient + doctor ==="
-REG=$(curl -s -X POST $GATEWAY/auth/register \
-  -H "Content-Type: application/json" \
-  -d "{\"name\":\"Patient Test\",\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\",\"role\":\"patient\"}")
-USER_ID=$(get_field "$REG" id)
-
-LOGIN=$(curl -s -X POST $GATEWAY/auth/login \
-  -H "Content-Type: application/json" \
-  -d "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}")
-TOKEN=$(get_field "$LOGIN" token)
-
-DOC=$(curl -s -X POST $GATEWAY/doctors \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d "{\"name\":\"Dr Concurrence\",\"specialty\":\"Test\",\"email\":\"$DOC_EMAIL\",\"phone\":\"20000000\"}")
-DOCTOR_ID=$(get_field "$DOC" id)
-
-echo "USER_ID=$USER_ID"
-echo "TOKEN=${TOKEN:0:20}..."
-echo "DOCTOR_ID=$DOCTOR_ID"
-echo
-
-if [ -z "$DOCTOR_ID" ] || [ "$DOCTOR_ID" = "$DOC" ]; then
-  echo "Echec setup, arret."
-  exit 1
+set -a; source .env; set +a
+if [[ -z "${CLINIC_DOCTOR_ID:-}" || "$CLINIC_DOCTOR_ID" == "PUT_EXISTING_DENTIST_UUID_HERE" ]]; then
+  echo "Set CLINIC_DOCTOR_ID in .env first."; exit 1
 fi
+EMAIL="patient-concurrency-$RANDOM@example.test"
+PASSWORD="TestPass123"
+SLOT_DATE="$(date -d '+12 days' '+%Y-%m-%d')"
+SLOT="${SLOT_DATE}T09:30:00+01:00"
 
-SLOT="2026-12-15T09:00:00"
+REG=$(curl -fsS -X POST "$GATEWAY/auth/register" -H 'Content-Type: application/json' \
+  -d "{\"name\":\"Concurrency Patient\",\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}")
+LOGIN=$(curl -fsS -X POST "$GATEWAY/auth/login" -H 'Content-Type: application/json' \
+  -d "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}")
+TOKEN=$(printf '%s' "$LOGIN" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>console.log(JSON.parse(s).token||''))")
+[[ -n "$TOKEN" ]] || { echo "Login failed"; exit 1; }
 
-echo "=== Envoi de 10 reservations simultanees sur le creneau $SLOT ==="
 for i in $(seq 1 10); do
-  curl -s -o /tmp/resp_$i.json -w "Requete $i -> HTTP %{http_code}\n" \
-    -X POST $GATEWAY/appointments \
-    -H "Content-Type: application/json" \
+  curl -sS -o "/tmp/clinic_booking_$i.json" -w "Request $i -> HTTP %{http_code}\n" \
+    -X POST "$GATEWAY/appointments" -H 'Content-Type: application/json' \
     -H "Authorization: Bearer $TOKEN" \
-    -d "{\"patientId\":\"$USER_ID\",\"patientName\":\"Patient Test\",\"patientEmail\":\"$EMAIL\",\"doctorId\":\"$DOCTOR_ID\",\"appointmentDate\":\"$SLOT\",\"notes\":\"test $i\"}" &
+    -d "{\"patientName\":\"Concurrency Patient\",\"appointmentDate\":\"$SLOT\",\"notes\":\"Concurrency test $i\"}" &
 done
 wait
 
-echo
-echo "=== Resume ==="
-SUCCESS=$(grep -l "201" /tmp/resp_*.json 2>/dev/null | wc -l)
-echo "Verification via codes HTTP ci-dessus."
-echo "Nombre de reponses avec 'Appointment created successfully' :"
-grep -l "created successfully" /tmp/resp_*.json | wc -l
-echo "Nombre de reponses avec 'no longer available' (409) :"
-grep -l "no longer available" /tmp/resp_*.json | wc -l
-
-rm -f /tmp/resp_*.json
+printf '\nCreated appointments: '
+grep -l 'Appointment created successfully' /tmp/clinic_booking_*.json | wc -l
+printf 'Slot conflicts: '
+grep -l 'no longer available' /tmp/clinic_booking_*.json | wc -l
+rm -f /tmp/clinic_booking_*.json

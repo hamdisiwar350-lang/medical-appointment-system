@@ -3,67 +3,153 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tableau de bord patient</title>
+  <meta name="theme-color" content="#07525a">
+  <title>Espace patient — Cabinet Dentaire</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dental-theme.css">
 </head>
-<body>
-  <div class="dashboard-container">
-    <header class="top-bar">
-      <div class="brand-mini">
-        <span class="logo-badge sm" data-icon="cross" data-size="18"></span>
-        <strong data-i18n="appTitle"></strong>
+<body class="doctor-page patient-page">
+  <div class="doc-layout">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="logo-badge sm" data-icon="tooth" data-size="19"></span>
+        <div><strong data-i18n="sidebarBrandLine1"></strong><small data-i18n="sidebarBrandLine2"></small></div>
       </div>
-      <div class="top-actions">
-        <div class="lang-switch inline">
-          <button class="lang-btn" data-lang="fr">FR</button>
-          <button class="lang-btn" data-lang="ar">عربي</button>
+
+      <div class="lang-switch inline sidebar-lang">
+        <button class="lang-btn" data-lang="fr">FR</button>
+        <button class="lang-btn" data-lang="ar">عربي</button>
+      </div>
+
+      <div class="doc-profile">
+        <div class="avatar patient-avatar" id="patientAvatar">P</div>
+        <strong id="patientName"></strong>
+        <small data-i18n="roleChipPatient"></small>
+      </div>
+
+      <nav class="side-nav patient-nav" id="patientNav">
+        <a href="#overview" class="nav-item active"><span data-icon="layout" data-size="18"></span><span data-i18n="patientNavHome"></span></a>
+        <a href="#booking" class="nav-item"><span data-icon="calendar" data-size="18"></span><span data-i18n="patientNavBooking"></span></a>
+        <a href="#appointments" class="nav-item"><span data-icon="clock" data-size="18"></span><span data-i18n="patientNavAppointments"></span></a>
+        <a href="notifications.html" class="nav-item"><span data-icon="bell" data-size="18"></span><span data-i18n="navNotifications"></span></a>
+      </nav>
+
+      <button id="logoutBtn" class="side-logout"><span data-icon="logout" data-size="18"></span><span data-i18n="logout"></span></button>
+    </aside>
+
+    <main class="doc-main patient-main">
+      <header class="doc-header">
+        <div>
+          <p class="eyebrow" data-i18n="patientPortalEyebrow"></p>
+          <h1 data-i18n="patientPortalTitle"></h1>
+          <p id="patientWelcome"></p>
         </div>
-        <div class="notif-wrap">
-          <button id="notifBellBtn" class="bell-btn" aria-label="Notifications">
-            <span data-icon="bell" data-size="18"></span>
-            <span id="notifBadge" class="notif-badge" hidden></span>
-          </button>
-          <div id="notifDropdown" class="notif-dropdown">
-            <div class="notif-dropdown-head">
-              <strong data-i18n="notifBellLabel"></strong>
-              <button class="notif-markall" data-notif-mark-all data-i18n="notifMarkAllRead"></button>
+        <div class="header-right">
+          <div class="notif-wrap">
+            <button id="notifBellBtn" class="bell-btn" aria-label="Notifications">
+              <span data-icon="bell" data-size="18"></span>
+              <span id="notifBadge" class="notif-badge" hidden></span>
+            </button>
+            <div id="notifDropdown" class="notif-dropdown">
+              <div class="notif-dropdown-head">
+                <strong data-i18n="notifBellLabel"></strong>
+                <button class="notif-markall" data-notif-mark-all data-i18n="notifMarkAllRead"></button>
+              </div>
+              <div id="notifDropdownList" class="notif-dropdown-list"></div>
+              <a href="notifications.html" class="notif-seeall" data-i18n="notifSeeAll"></a>
             </div>
-            <div id="notifDropdownList" class="notif-dropdown-list"></div>
-            <a href="notifications.html" class="notif-seeall" data-i18n="notifSeeAll"></a>
           </div>
+          <div class="date-chip"><span data-icon="calendar" data-size="16"></span><span id="patientTodayDate"></span></div>
         </div>
-        <span class="role-chip"><span data-icon="user" data-size="14"></span><span data-i18n="roleChipPatient"></span></span>
-        <button id="logoutBtn"><span data-icon="logout" data-size="16"></span><span data-i18n="logout"></span></button>
-      </div>
-    </header>
+      </header>
 
-    <section class="welcome">
-      <h2 class="welcome-title" id="welcomeTitle"></h2>
-      <p data-i18n="welcomeSubtitle"></p>
-    </section>
+      <section class="patient-intro" id="overview">
+        <div>
+          <span class="clinic-kicker" data-i18n="clinicPrivateLabel"></span>
+          <h2 data-i18n="patientWelcomeHeadline"></h2>
+          <p data-i18n="patientWelcomeSubtitle"></p>
+        </div>
+        <div class="patient-intro-mark" data-icon="tooth" data-size="64"></div>
+      </section>
 
-    <div class="panel">
-      <h2 class="section-title"><span class="icon-badge" data-icon="calendar" data-size="16"></span><span data-i18n="sectionNewAppointment"></span></h2>
-      <form id="bookForm">
-        <label data-i18n="labelDoctor"></label>
-        <select id="doctorSelect" required></select>
-        <label data-i18n="labelDate"></label>
-        <input type="date" id="appointmentDateInput" required>
-        <label data-i18n="labelAvailableTime"></label>
-        <div id="slotsContainer" class="slots-row"></div>
-        <label data-i18n="labelNotes"></label>
-        <textarea id="appointmentNotes" data-i18n-placeholder="notesPlaceholder" rows="3"></textarea>
-        <div id="bookMessage"></div>
-        <button type="submit" class="submit-btn" data-i18n="btnBook"></button>
-      </form>
-    </div>
+      <section class="patient-content-grid" id="booking">
+        <section class="panel patient-booking-panel">
+          <div class="panel-head patient-panel-head">
+            <div>
+              <h2 class="section-title"><span class="icon-badge" data-icon="calendar" data-size="17"></span><span data-i18n="patientBookingTitle"></span></h2>
+              <p class="panel-subtitle" data-i18n="patientBookingSubtitle"></p>
+            </div>
+            <span class="panel-step">01 <span data-i18n="patientBookingStep"></span></span>
+          </div>
 
-    <h2 class="section-title"><span class="icon-badge" data-icon="stethoscope" data-size="16"></span><span data-i18n="sectionAvailableDoctors"></span></h2>
-    <div id="specialtyFilter" class="pills-row"></div>
-    <div id="doctorsList" class="grid"></div>
+          <form id="bookForm" class="patient-booking-form">
+            <div class="form-field">
+              <label for="appointmentReason" data-i18n="patientReasonLabel"></label>
+              <select id="appointmentReason" required>
+                <option value="" data-i18n="patientReasonPlaceholder"></option>
+                <option value="Contrôle dentaire" data-i18n="patientReasonCheckup"></option>
+                <option value="Détartrage" data-i18n="patientReasonCleaning"></option>
+                <option value="Douleur dentaire" data-i18n="patientReasonPain"></option>
+                <option value="Soin dentaire" data-i18n="patientReasonTreatment"></option>
+                <option value="Suivi de traitement" data-i18n="patientReasonFollowup"></option>
+                <option value="Autre motif" data-i18n="patientReasonOther"></option>
+              </select>
+            </div>
 
-    <h2 class="section-title"><span class="icon-badge" data-icon="calendar" data-size="16"></span><span data-i18n="sectionMyAppointments"></span></h2>
-    <div id="appointmentsList" class="grid"></div>
+            <div class="form-field">
+              <label for="appointmentDateInput" data-i18n="patientDateLabel"></label>
+              <input type="date" id="appointmentDateInput" required>
+            </div>
+
+            <div class="form-field form-field-full">
+              <label data-i18n="patientTimeLabel"></label>
+              <div id="slotsContainer" class="clinic-slots">
+                <p class="slot-hint" data-i18n="patientChooseDateHint"></p>
+              </div>
+            </div>
+
+            <div class="form-field form-field-full">
+              <label for="appointmentNotes" data-i18n="patientNotesLabel"></label>
+              <textarea id="appointmentNotes" rows="3" maxlength="1000" data-i18n-placeholder="patientNotesPlaceholder"></textarea>
+            </div>
+
+            <div id="bookMessage" class="booking-message" role="status" aria-live="polite"></div>
+            <button type="submit" class="submit-btn patient-book-button"><span data-icon="calendar" data-size="17"></span><span data-i18n="patientBookButton"></span></button>
+          </form>
+        </section>
+
+        <aside class="panel clinic-info-panel">
+          <div class="clinic-info-icon" data-icon="tooth" data-size="28"></div>
+          <span class="clinic-kicker" data-i18n="patientDentistCardEyebrow"></span>
+          <h2 id="clinicDentistName" data-i18n="loading"></h2>
+          <p id="clinicDentistDescription" data-i18n="patientDentistCardDescription"></p>
+          <div class="clinic-info-divider"></div>
+          <div class="clinic-info-row"><span data-icon="clock" data-size="16"></span><div><small data-i18n="patientClinicHours"></small><strong id="clinicHours">—</strong></div></div>
+          <div class="clinic-info-row"><span data-icon="phone" data-size="16"></span><div><small data-i18n="patientClinicPhone"></small><strong id="clinicPhone">—</strong></div></div>
+          <p class="clinic-info-note" data-i18n="patientClinicInfoNote"></p>
+        </aside>
+      </section>
+
+      <section class="panel patient-history-panel" id="appointments">
+        <div class="panel-head">
+          <div>
+            <h2 class="section-title"><span class="icon-badge" data-icon="clock" data-size="17"></span><span data-i18n="patientAppointmentsTitle"></span></h2>
+            <p class="panel-subtitle" data-i18n="patientAppointmentsSubtitle"></p>
+          </div>
+          <span class="history-count" id="patientAppointmentCount">0</span>
+        </div>
+        <div class="table-wrap">
+          <table class="appt-table patient-appt-table">
+            <thead><tr>
+              <th data-i18n="colTime"></th>
+              <th data-i18n="patientReasonColumn"></th>
+              <th data-i18n="colStatus"></th>
+            </tr></thead>
+            <tbody id="appointmentsBody"><tr><td colspan="3" class="empty" data-i18n="loading"></td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script src="js/translations.js"></script>

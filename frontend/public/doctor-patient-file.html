@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#07515a">
+  <title>Dossier patient — Clinique Dentaire</title>
+  <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/dental-theme.css"><link rel="stylesheet" href="css/figma-dentist.css?v=20261126-4">
+
+  <style>
+    .fd-record-module-nav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 22px;padding:10px;background:#fff;border:1px solid #e3ecec;border-radius:16px;box-shadow:0 5px 18px rgba(7,81,90,.045)}
+    .fd-record-module-nav .fd-record-module-label{align-self:center;padding:0 10px;color:#648084;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    .fd-record-module-nav a{display:inline-flex;align-items:center;gap:8px;padding:11px 15px;border:1px solid transparent;border-radius:11px;background:#f3f8f8;color:#245b61;font-size:13px;font-weight:700;text-decoration:none;transition:background .18s ease,border-color .18s ease,color .18s ease}
+    .fd-record-module-nav a:hover{background:#e7f2f1;border-color:#c8dfdc}
+    .fd-record-module-nav a.active{background:#eee9ff;border-color:#d9cdfd;color:#6545a6}
+    .fd-record-module-nav a:focus-visible{outline:3px solid rgba(111,79,184,.28);outline-offset:2px}
+    #odontogramSection,#treatmentPlanSection,#patientDocuments{scroll-margin-top:22px}
+    @media(max-width:640px){.fd-record-module-nav{gap:7px}.fd-record-module-nav .fd-record-module-label{width:100%;padding:3px 5px}.fd-record-module-nav a{flex:1 1 100%;justify-content:center}}
+  </style>
+</head>
+<body class="figma-dentist-page" data-doctor-view="patient-file">
+<div class="fd-shell">
+  <aside class="fd-sidebar" id="fdSidebar" aria-label="Navigation dentiste"></aside>
+  <button class="fd-scrim" id="fdScrim" aria-label="Fermer le menu" hidden></button>
+  <div class="fd-main">
+    <header class="fd-topbar">
+      <button class="fd-mobile-menu" id="fdMobileMenu" type="button" aria-label="Ouvrir le menu" data-icon="menu" data-size="19"></button>
+      <div class="fd-topbar-spacer"></div>
+      <label class="fd-search"><span data-icon="search" data-size="17"></span><input id="doctorSearch" type="search" placeholder="Rechercher un patient ou un rendez-vous…"></label>
+      <div class="lang-switch inline fd-language"><button class="lang-btn" data-lang="fr">FR</button><button class="lang-btn" data-lang="ar">AR</button></div>
+      <div class="notif-wrap fd-notif-wrap">
+        <button id="notifBellBtn" class="bell-btn fd-bell" type="button" aria-label="Notifications"><span data-icon="bell" data-size="18"></span><span id="notifBadge" class="notif-badge" hidden></span></button>
+        <div id="notifDropdown" class="notif-dropdown fd-notif-dropdown">
+          <div class="notif-dropdown-head"><strong data-i18n="notifBellLabel"></strong><button class="notif-markall" data-notif-mark-all data-i18n="notifMarkAllRead"></button></div>
+          <div id="notifDropdownList" class="notif-dropdown-list"></div><a href="doctor-notifications.html" class="notif-seeall" data-i18n="notifSeeAll"></a>
+        </div>
+      </div>
+      <div class="fd-top-avatar" id="fdTopAvatar">D</div>
+    </header>
+
+    <main class="fd-page-content">
+      <section class="fd-page-heading">
+        <div><p class="fd-eyebrow">ESPACE CLINIQUE · DOSSIER CONFIDENTIEL</p><h1>Dossier patient</h1><p>Les données sont enregistrées dans le service médical du cabinet.</p></div>
+        <div class="fd-page-actions"><a class="fd-primary" href="doctor-patients.html">Retour aux patients</a></div>
+      </section>
+      <section class="fd-record-header">
+        <div class="fd-patient-card-avatar" id="recordAvatar">—</div>
+        <div><h1 id="recordPatientName">Chargement du patient…</h1><p id="recordPatientEmail">—</p><p id="recordPatientMeta">—</p></div>
+        <div class="fd-record-actions"><span class="fd-module-state" id="recordSaveState">Dossier sécurisé</span></div>
+      </section>
+
+      <nav class="fd-record-module-nav" aria-label="Modules du dossier patient">
+        <span class="fd-record-module-label" data-record-fr="Dans ce dossier" data-record-ar="داخل هذا الملف">Dans ce dossier</span>
+        <a href="#odontogramSection" data-record-section><span data-icon="tooth" data-size="17"></span><span data-record-fr="Odontogramme" data-record-ar="مخطط الأسنان">Odontogramme</span></a>
+        <a href="#treatmentPlanSection" data-record-section><span data-icon="clipboard-list" data-size="17"></span>Plans de traitement</a>
+        <a href="#patientDocuments" data-record-section><span data-icon="file" data-size="17"></span><span data-record-fr="Documents" data-record-ar="الوثائق">Documents</span></a>
+      </nav>
+      <section class="fd-panel" id="patientProfileSection">
+        <div class="fd-toolbar"><div><h2>Informations médicales</h2><p class="fd-panel-subtitle">Renseignez uniquement les informations vérifiées avec le patient.</p></div></div>
+        <form id="patientMedicalProfileForm">
+          <div class="fd-form-grid">
+            <div class="fd-field full"><label for="medicalHistory">Antécédents médicaux</label><textarea id="medicalHistory" name="medicalHistory" maxlength="5000" placeholder="Antécédents médicaux déclarés et vérifiés…"></textarea></div>
+            <div class="fd-field"><label for="patientAllergies">Allergies</label><textarea id="patientAllergies" name="allergies" maxlength="5000" placeholder="Allergies connues ou non renseignées…"></textarea></div>
+            <div class="fd-field"><label for="patientMedications">Médicaments actuels</label><textarea id="patientMedications" name="medications" maxlength="5000" placeholder="Médicaments actuels…"></textarea></div>
+          </div>
+          <div class="fd-form-footer"><span id="profileFeedback" class="fd-feedback" role="status"></span><button class="fd-primary" id="saveProfileButton" type="submit">Enregistrer les informations</button></div>
+        </form>
+      </section>
+      <section class="fd-dentist-grid">
+        <article class="fd-card fd-odontogram" id="odontogramSection">
+          <div class="fd-card-head"><div><h2>Odontogramme FDI</h2><p>Dentition permanente · 32 dents · état sauvegardé par patient</p></div><div class="fd-legend"><span><i class="neutral"></i>Non renseignée</span><span><i class="carie"></i>Carie</span><span><i class="obturée"></i>Obturée</span><span><i class="couronne"></i>Couronne</span></div></div>
+          <div class="fd-teeth-chart"><div class="fd-jaw-label">MAXILLAIRE</div><div class="fd-teeth-row" id="recordUpperTeeth"></div><div class="fd-midline"><span>DROITE</span><i></i><span>GAUCHE</span></div><div class="fd-teeth-row fd-lower-row" id="recordLowerTeeth"></div><div class="fd-jaw-label">MANDIBULE</div></div>
+          <div class="fd-tooth-detail"><span class="fd-selected-tooth" data-icon="tooth" data-size="25"></span><div><small>DENT SÉLECTIONNÉE</small><strong id="recordSelectedTooth">24</strong><p id="recordToothDescription">Aucune donnée enregistrée pour cette dent.</p></div></div>
+          <div class="fd-tooth-detail-controls">
+            <label class="fd-field"><span>État</span><select id="recordToothStatus"><option value="unreported">Non renseignée</option><option value="healthy">Saïne / saine</option><option value="caries">Carie</option><option value="filled">Obturée</option><option value="crown">Couronne</option><option value="missing">Absente</option></select></label>
+            <label class="fd-field"><span>Note sur la dent</span><input id="recordToothNote" maxlength="1000" placeholder="Observation facultative"></label>
+            <button type="button" class="fd-primary" id="saveToothButton">Enregistrer</button>
+          </div>
+          <p class="fd-feedback" id="toothFeedback" role="status"></p>
+        </article>
+        <aside class="fd-clinical-side">
+          <article class="fd-card fd-clinical-note">
+            <div class="fd-card-head"><h2>Notes cliniques</h2><span class="fd-outline-icon" data-icon="file" data-size="18"></span></div>
+            <form id="clinicalNoteForm" class="fd-note-composer"><label class="fd-field"><span>Nouvelle note médicale</span><textarea id="clinicalNoteInput" maxlength="10000" required placeholder="Rédigez une note clinique…"></textarea></label><button class="fd-primary" type="submit" id="saveClinicalNoteButton">Ajouter la note</button><p id="noteFeedback" class="fd-feedback" role="status"></p></form>
+            <div id="clinicalNotesList"><div class="fd-empty-state">Aucune note clinique enregistrée.</div></div>
+          </article>
+          <article class="fd-card fd-diagnosis" id="diagnosisSection">
+            <div class="fd-card-head"><h2>Diagnostics</h2><span class="fd-module-state">Dossier médical</span></div>
+            <form id="diagnosisForm" class="fd-clinical-form">
+              <label class="fd-field"><span>Diagnostic</span><input id="diagnosisName" maxlength="180" required placeholder="Ex. Carie dentaire"></label>
+              <label class="fd-field"><span>Dent concernée (FDI, facultatif)</span><select id="diagnosisToothNumber"><option value="">Aucune dent précise</option></select></label>
+              <label class="fd-field"><span>Détails cliniques</span><textarea id="diagnosisDetails" maxlength="5000" placeholder="Observations cliniques vérifiées…"></textarea></label>
+              <div class="fd-clinical-form-footer"><span id="diagnosisFeedback" class="fd-feedback" role="status"></span><button type="submit" class="fd-primary" id="saveDiagnosisButton">Ajouter le diagnostic</button></div>
+            </form>
+            <div id="diagnosesList"><div class="fd-empty-state">Aucun diagnostic enregistré.</div></div>
+          </article>
+          <article class="fd-card fd-diagnosis" id="treatmentPlanSection">
+            <div class="fd-card-head"><h2>Plans de traitement</h2><span class="fd-module-state">Suivi médical</span></div>
+            <form id="treatmentPlanForm" class="fd-clinical-form">
+              <label class="fd-field"><span>Traitement prévu</span><input id="planTitle" maxlength="180" required placeholder="Ex. Soin de la dent 24"></label>
+              <label class="fd-field"><span>Diagnostic associé (facultatif)</span><select id="planDiagnosisId"><option value="">Sans diagnostic associé</option></select></label>
+              <label class="fd-field"><span>Description</span><textarea id="planDescription" maxlength="5000" placeholder="Étapes et précisions du traitement…"></textarea></label>
+              <div class="fd-form-grid">
+                <label class="fd-field"><span>Date prévue (facultatif)</span><input id="planDate" type="date"></label>
+                <label class="fd-field"><span>Priorité</span><select id="planPriority"><option value="normal">Normale</option><option value="high">Haute</option><option value="low">Basse</option></select></label>
+              </div>
+              <div class="fd-clinical-form-footer"><span id="planFeedback" class="fd-feedback" role="status"></span><button type="submit" class="fd-primary" id="saveTreatmentPlanButton">Ajouter au plan</button></div>
+            </form>
+            <div id="treatmentPlansList"><div class="fd-empty-state">Aucun plan de traitement enregistré.</div></div>
+          </article>
+        </aside>
+      </section>
+      <section class="fd-panel" id="patientAppointmentsSection"><div class="fd-toolbar"><div><h2>Historique des rendez-vous</h2><p class="fd-panel-subtitle">Historique réel issu du service de rendez-vous.</p></div></div><div class="fd-table-wrap"><table class="fd-table"><thead><tr><th>Date</th><th>Heure</th><th>Statut</th><th>Message de réservation</th></tr></thead><tbody id="recordAppointmentRows"><tr><td colspan="4" class="fd-empty-row">Chargement…</td></tr></tbody></table></div></section>
+      <section class="fd-panel" id="patientDocuments"><div class="fd-toolbar"><div><h2>Documents du patient</h2><p class="fd-panel-subtitle">Les documents ne sont pas encore stockés dans le projet.</p></div><span class="fd-coming-soon">Stockage à développer</span></div><div class="fd-empty-state">Aucun document médical n’est enregistré.</div></section>
+    </main>
+  </div>
+</div>
+<script src="js/translations.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/doctor-app-shell.js?v=20261126-7"></script>
+<script src="js/doctor-patient-file.js?v=20261126-v4"></script><script src="js/notifications.js"></script>
+</body></html>

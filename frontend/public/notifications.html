@@ -1,46 +1,43 @@
 <!DOCTYPE html>
 <html lang="fr" dir="ltr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Notifications</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notifications — Cabinet Dentaire</title>
+  <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/dental-theme.css">
 </head>
-<body>
-  <div class="dashboard-container">
-    <header class="top-bar">
-      <div class="brand-mini">
-        <span class="logo-badge sm" data-icon="cross" data-size="18"></span>
-        <strong data-i18n="appTitle"></strong>
-      </div>
-      <div class="top-actions">
-        <div class="lang-switch inline">
-          <button class="lang-btn" data-lang="fr">FR</button>
-          <button class="lang-btn" data-lang="ar">عربي</button>
-        </div>
-        <a id="backLink" href="dashboard.html" class="back-link" data-i18n="notifBack"></a>
-      </div>
-    </header>
-
-    <section class="panel">
-      <div class="panel-head">
-        <h2 class="section-title"><span class="icon-badge" data-icon="bell" data-size="16"></span><span data-i18n="notifPageTitle"></span></h2>
-        <button class="pill" data-notif-mark-all data-i18n="notifMarkAllRead"></button>
-      </div>
-      <div id="notifPageList" class="notif-page-list"></div>
-    </section>
+<body class="doctor-page patient-page">
+  <div class="doc-layout">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><span class="logo-badge sm" data-icon="tooth" data-size="19"></span><div><strong data-i18n="sidebarBrandLine1">Cabinet</strong><small data-i18n="sidebarBrandLine2">Dentaire</small></div></div>
+      <div class="lang-switch inline sidebar-lang"><button class="lang-btn" data-lang="fr">FR</button><button class="lang-btn" data-lang="ar">عربي</button></div>
+      <div class="doc-profile"><div class="avatar patient-avatar" id="patientAvatar">P</div><strong id="patientName"></strong><small data-i18n="roleChipPatient">Espace patient</small></div>
+      <nav class="side-nav patient-nav" aria-label="Navigation patient">
+        <a href="dashboard.html#overview" class="nav-item"><span data-icon="layout" data-size="18"></span><span data-i18n="patientNavHome">Vue d’ensemble</span></a>
+        <a href="dashboard.html#booking" class="nav-item"><span data-icon="calendar" data-size="18"></span><span data-i18n="patientNavBooking">Prendre rendez-vous</span></a>
+        <a href="dashboard.html#appointments" class="nav-item"><span data-icon="clock" data-size="18"></span><span data-i18n="patientNavAppointments">Mes rendez-vous</span></a>
+        <a href="notifications.html" class="nav-item active" aria-current="page"><span data-icon="bell" data-size="18"></span><span data-i18n="navNotifications">Notifications</span></a>
+      </nav>
+      <button id="patientLogout" class="side-logout"><span data-icon="logout" data-size="18"></span><span data-i18n="logout">Déconnexion</span></button>
+    </aside>
+    <main class="doc-main patient-main">
+      <header class="doc-header"><div><p class="eyebrow" data-i18n="patientPortalEyebrow"></p><h1 data-i18n="notifPageTitle">Mes notifications</h1><p id="patientNotifGreeting"></p></div><div class="header-right"><div class="lang-switch inline"><button class="lang-btn" data-lang="fr">FR</button><button class="lang-btn" data-lang="ar">عربي</button></div></div></header>
+      <section class="panel"><div class="panel-head"><h2 class="section-title"><span class="icon-badge" data-icon="bell" data-size="16"></span><span data-i18n="notifPageTitle">Mes notifications</span></h2><button class="pill" data-notif-mark-all data-i18n="notifMarkAllRead">Tout marquer comme lu</button></div><div id="notifPageList" class="notif-page-list"></div></section>
+    </main>
   </div>
-
-  <script src="js/translations.js"></script>
-  <script src="js/i18n.js"></script>
-  <script src="js/icons.js"></script>
-  <script src="js/api.js"></script>
+  <script src="js/translations.js"></script><script src="js/i18n.js"></script><script src="js/icons.js"></script><script src="js/api.js"></script>
   <script>
-    const user = getUser();
-    if (!getToken() || !user) window.location.href = 'index.html';
-    document.getElementById('backLink').href = user.role === 'doctor' ? 'doctor-dashboard.html' : 'dashboard.html';
-    window.onLanguageChange = null;
+    (() => {
+      const user = getUser();
+      if (!getToken() || !user) { clearSession(); window.location.replace('index.html'); return; }
+      if (user.role === 'assistant') { window.location.replace('assistant-dashboard.html'); return; }
+      if (user.role === 'doctor') { window.location.replace('doctor-notifications.html'); return; }
+      if (user.role !== 'patient') { clearSession(); window.location.replace('index.html'); return; }
+      const name = user.name || 'Patient';
+      document.getElementById('patientName').textContent = name;
+      document.getElementById('patientAvatar').textContent = name.trim().charAt(0).toUpperCase() || 'P';
+      document.getElementById('patientNotifGreeting').textContent = name;
+      document.getElementById('patientLogout').addEventListener('click', () => { clearSession(); window.location.replace('index.html'); });
+    })();
   </script>
   <script src="js/notifications.js"></script>
-</body>
-</html>
+</body></html>

@@ -3,115 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tableau de bord médecin</title>
+  <meta name="theme-color" content="#07515a">
+  <title>Vue clinique — Clinique Dentaire</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dental-theme.css">
+  <link rel="stylesheet" href="css/figma-dentist.css?v=20261126-4">
+  <link rel="stylesheet" href="css/doctor-dashboard-overview.css?v=20261126-5">
 </head>
-<body class="doctor-page">
-  <div class="doc-layout">
+<body class="figma-dentist-page">
+  <div class="fd-shell">
+    <aside class="fd-sidebar" id="fdSidebar" aria-label="Navigation dentiste"></aside>
+    <button class="fd-scrim" id="fdScrim" aria-label="Fermer le menu" hidden></button>
 
-    <aside class="sidebar">
-      <div class="sidebar-brand">
-        <span class="logo-badge sm" data-icon="cross" data-size="18"></span>
-        <div><strong data-i18n="sidebarBrandLine1"></strong><small data-i18n="sidebarBrandLine2"></small></div>
-      </div>
-
-      <div class="lang-switch inline sidebar-lang">
-        <button class="lang-btn" data-lang="fr">FR</button>
-        <button class="lang-btn" data-lang="ar">عربي</button>
-      </div>
-
-      <div class="doc-profile">
-        <div class="avatar" id="docAvatar"></div>
-        <strong id="docName"></strong>
-        <small id="docSpecialty"></small>
-      </div>
-
-      <nav class="side-nav">
-        <a href="#top" class="nav-item active"><span data-icon="layout" data-size="18"></span><span data-i18n="navDashboard"></span></a>
-        <a href="#todaySection" class="nav-item"><span data-icon="calendar" data-size="18"></span><span data-i18n="navMyAppointments"></span></a>
-        <a href="#patientsSection" class="nav-item"><span data-icon="users" data-size="18"></span><span data-i18n="navMyPatients"></span></a>
-        <a href="notifications.html" class="nav-item"><span data-icon="bell" data-size="18"></span><span data-i18n="navNotifications"></span></a>
-        <a href="#" class="nav-item"><span data-icon="settings" data-size="18"></span><span data-i18n="navSettings"></span></a>
-      </nav>
-
-      <button id="docLogout" class="side-logout"><span data-icon="logout" data-size="18"></span><span data-i18n="logout"></span></button>
-    </aside>
-
-    <main class="doc-main" id="top">
-      <header class="doc-header">
-        <div>
-          <h1 data-i18n="controlPanelTitle"></h1>
-          <p id="docGreeting"></p>
+    <div class="fd-main">
+      <header class="fd-topbar">
+        <button class="fd-mobile-menu" id="fdMobileMenu" aria-label="Ouvrir le menu" data-icon="menu" data-size="19"></button>
+        <div class="fd-topbar-spacer"></div>
+        <label class="fd-search">
+          <span data-icon="search" data-size="17"></span>
+          <input id="doctorSearch" type="search" placeholder="Rechercher un dossier patient…"
+            data-fr-placeholder="Rechercher un dossier patient…" data-ar-placeholder="ابحث عن ملف مريض…">
+        </label>
+        <div class="lang-switch inline fd-language">
+          <button class="lang-btn" data-lang="fr">FR</button>
+          <button class="lang-btn" data-lang="ar">AR</button>
         </div>
-        <div class="header-right">
-          <div class="notif-wrap">
-            <button id="notifBellBtn" class="bell-btn" aria-label="Notifications">
-              <span data-icon="bell" data-size="18"></span>
-              <span id="notifBadge" class="notif-badge" hidden></span>
-            </button>
-            <div id="notifDropdown" class="notif-dropdown">
-              <div class="notif-dropdown-head">
-                <strong data-i18n="notifBellLabel"></strong>
-                <button class="notif-markall" data-notif-mark-all data-i18n="notifMarkAllRead"></button>
-              </div>
-              <div id="notifDropdownList" class="notif-dropdown-list"></div>
-              <a href="notifications.html" class="notif-seeall" data-i18n="notifSeeAll"></a>
-            </div>
+        <div class="notif-wrap fd-notif-wrap">
+          <button id="notifBellBtn" class="bell-btn fd-bell" aria-label="Notifications">
+            <span data-icon="bell" data-size="18"></span><span id="notifBadge" class="notif-badge" hidden></span>
+          </button>
+          <div id="notifDropdown" class="notif-dropdown fd-notif-dropdown">
+            <div class="notif-dropdown-head"><strong data-i18n="notifBellLabel"></strong><button class="notif-markall" data-notif-mark-all data-i18n="notifMarkAllRead"></button></div>
+            <div id="notifDropdownList" class="notif-dropdown-list"></div>
+            <a href="doctor-notifications.html" class="notif-seeall" data-i18n="notifSeeAll"></a>
           </div>
-          <div class="date-chip"><span data-icon="calendar" data-size="16"></span><span id="todayDate"></span></div>
         </div>
+        <div class="fd-top-avatar" id="fdTopAvatar">D</div>
       </header>
 
-      <section class="stats">
-        <div class="stat-card">
-          <div class="stat-icon" data-icon="calendar" data-size="22"></div>
-          <div><strong id="statToday">0</strong><span class="label" data-i18n="statTodayLabel"></span></div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon orange" data-icon="clock" data-size="22"></div>
-          <div><strong id="statPending">0</strong><span class="label" data-i18n="statPendingLabel"></span></div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon green" data-icon="users" data-size="22"></div>
-          <div><strong id="statPatients">0</strong><span class="label" data-i18n="statPatientsLabel"></span></div>
-        </div>
-      </section>
-
-      <section class="panel" id="todaySection">
-        <div class="panel-head">
-          <h2 class="section-title"><span class="icon-badge" data-icon="calendar" data-size="16"></span><span data-i18n="appointmentsPanelTitle"></span></h2>
-          <div class="pills-row" id="apptFilter">
-            <button class="pill active" data-filter="today" data-i18n="filterToday"></button>
-            <button class="pill" data-filter="upcoming" data-i18n="filterUpcoming"></button>
-            <button class="pill" data-filter="all" data-i18n="filterAll"></button>
+      <main class="fd-content">
+        <section class="fd-welcome-row fd-dashboard-welcome">
+          <div>
+            <p class="fd-eyebrow" data-fr="ESPACE CLINIQUE" data-ar="الفضاء السريري">ESPACE CLINIQUE</p>
+            <h1 id="docGreeting">Bonjour, Docteur</h1>
+            <p data-fr="Votre activité clinique et le prochain rendez-vous du cabinet." data-ar="نشاط العيادة والموعد القادم.">Votre activité clinique et le prochain rendez-vous du cabinet.</p>
           </div>
-        </div>
-        <div class="table-wrap">
-          <table class="appt-table">
-            <thead>
-              <tr>
-                <th data-i18n="colPatient"></th>
-                <th data-i18n="colTime"></th>
-                <th data-i18n="colStatus"></th>
-                <th data-i18n="colActions"></th>
-              </tr>
-            </thead>
-            <tbody id="apptBody"></tbody>
-          </table>
-        </div>
-      </section>
+          <div class="fd-dashboard-date" id="todayDate"></div>
+        </section>
 
-      <h2 class="section-title" id="patientsSection"><span class="icon-badge" data-icon="users" data-size="16"></span><span data-i18n="patientsSectionTitle"></span></h2>
-      <div id="patientsGrid" class="grid"></div>
-    </main>
+        <section class="fd-stats-grid" aria-label="Statistiques du cabinet">
+          <article class="fd-stat-card">
+            <span class="fd-stat-icon teal" data-icon="calendar" data-size="21"></span>
+            <div><span class="fd-stat-label" data-fr="Consultations aujourd’hui" data-ar="استشارات اليوم">Consultations aujourd’hui</span><strong id="statToday">—</strong><small data-fr="Hors rendez-vous annulés" data-ar="دون المواعيد الملغاة">Hors rendez-vous annulés</small></div>
+          </article>
+          <article class="fd-stat-card">
+            <span class="fd-stat-icon purple" data-icon="clock" data-size="21"></span>
+            <div><span class="fd-stat-label" data-fr="Heure du prochain patient" data-ar="موعد المريض القادم">Heure du prochain patient</span><strong id="statPending">—</strong><small id="nextTimeHint" data-fr="Aucun rendez-vous à venir" data-ar="لا يوجد موعد قادم">Aucun rendez-vous à venir</small></div>
+          </article>
+          <article class="fd-stat-card">
+            <span class="fd-stat-icon orange" data-icon="users" data-size="21"></span>
+            <div><span class="fd-stat-label" data-fr="Dossiers patients" data-ar="ملفات المرضى">Dossiers patients</span><strong id="statPatients">—</strong><small data-fr="Patients liés aux rendez-vous du cabinet" data-ar="المرضى المرتبطون بمواعيد العيادة">Patients liés aux rendez-vous du cabinet</small></div>
+          </article>
+          <article class="fd-stat-card">
+            <span class="fd-stat-icon blue" data-icon="check-circle" data-size="21"></span>
+            <div><span class="fd-stat-label" data-fr="Consultations terminées" data-ar="الاستشارات المكتملة">Consultations terminées</span><strong id="fdStatCompleted">—</strong><small data-fr="Aujourd’hui" data-ar="اليوم">Aujourd’hui</small></div>
+          </article>
+        </section>
 
+        <section class="fd-next-patient-panel fd-card" id="nextAppointmentCard" aria-live="polite">
+          <div class="fd-next-patient-avatar" id="nextPatientAvatar">—</div>
+          <div class="fd-next-patient-info">
+            <p class="fd-eyebrow" data-fr="PROCHAIN PATIENT" data-ar="المريض القادم">PROCHAIN PATIENT</p>
+            <h2 id="nextPatientName">Chargement du prochain rendez-vous…</h2>
+            <p id="nextPatientDetails">Les informations du prochain rendez-vous apparaîtront ici.</p>
+            <span id="nextPatientStatus" class="fd-status" hidden></span>
+          </div>
+          <div class="fd-next-patient-actions">
+            <a class="fd-primary" href="doctor-appointments.html" data-fr="Voir les consultations" data-ar="عرض الاستشارات">Voir les consultations</a>
+            <a class="fd-secondary" href="doctor-patients.html" data-fr="Choisir un dossier patient" data-ar="اختيار ملف مريض">Choisir un dossier patient</a>
+          </div>
+          <div class="fd-dashboard-message" id="dashboardMessage" role="status" aria-live="polite">Chargement des rendez-vous…</div>
+        </section>
+      </main>
+    </div>
   </div>
 
   <script src="js/translations.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/icons.js"></script>
   <script src="js/api.js"></script>
-  <script src="js/doctor-dashboard.js"></script>
+  <script src="js/doctor-app-shell.js?v=20261126-7"></script>
+  <script src="js/doctor-dashboard-overview.js?v=20261126-5"></script>
   <script src="js/notifications.js"></script>
 </body>
 </html>

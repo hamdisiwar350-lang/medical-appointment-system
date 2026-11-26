@@ -13,11 +13,6 @@ function t(key, vars) {
   return str;
 }
 
-function translateSpecialty(value) {
-  const key = window.SPECIALTY_KEY_MAP && window.SPECIALTY_KEY_MAP[value];
-  return key ? t(key) : value;
-}
-
 function translateStatus(status) {
   const map = { pending: 'statusPending', confirmed: 'statusConfirmed', cancelled: 'statusCancelled', completed: 'statusCompleted' };
   return t(map[status] || status);
@@ -54,6 +49,7 @@ function setLang(lang) {
   applyTranslations();
   if (typeof renderIcons === 'function') renderIcons();
   if (typeof window.onLanguageChange === 'function') window.onLanguageChange();
+  document.dispatchEvent(new CustomEvent('app:languagechange', { detail: { lang } }));
 }
 
 function initLangSwitcher() {

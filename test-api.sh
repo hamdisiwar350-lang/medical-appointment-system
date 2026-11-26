@@ -1,77 +1,45 @@
-#!/bin/bash
-# Scenario complet : register -> login -> doctor -> appointment -> status -> notifications
-# Usage : bash test-api.sh
+#!/usr/bin/env bash
+# Smoke test for the one-dentist clinic workflow.
+# Requires a configured .env with CLINIC_DOCTOR_ID.
+set -euo pipefail
 
 GATEWAY="http://127.0.0.1:8080"
-NOTIF="http://127.0.0.1:3004"
-EMAIL="sami$RANDOM@test.com"
-DOC_EMAIL="ahmed$RANDOM@hopital.tn"
-PASSWORD="123456"
+if [[ ! -f .env ]]; then echo "Missing .env"; exit 1; fi
+set -a; source .env; set +a
+if [[ -z "${CLINIC_DOCTOR_ID:-}" || "$CLINIC_DOCTOR_ID" == "PUT_EXISTING_DENTIST_UUID_HERE" ]]; then
+  echo "Set CLINIC_DOCTOR_ID in .env to the existing dentist profile UUID."; exit 1
+fi
 
-get_field() {
-  echo "$1" | sed -E "s/.*\"$2\":\"?([^\",}]*)\"?.*/\1/"
-}
+EMAIL="patient-test-$RANDOM@example.test"
+PASSWORD="TestPass123"
+APPOINTMENT_DATE="$(date -d '+8 days' '+%Y-%m-%d')T10:00:00+01:00"
 
-echo "=== 0. Health ==="
-curl -s $GATEWAY/health; echo; echo
+printf '\n=== Gateway health ===\n'
+curl -fsS "$GATEWAY/health"; echo
 
-echo "=== 1. Register ==="
-REG=$(curl -s -X POST $GATEWAY/auth/register \
-  -H "Content-Type: application/json" \
-  -d "{\"name\":\"Sami\",\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\",\"role\":\"patient\"}")
-echo "$REG"; echo
-USER_ID=$(get_field "$REG" id)
+printf '\n=== Register patient ===\n'
+curl -fsS -X POST "$GATEWAY/auth/register" \
+  -H 'Content-Type: application/json' \
+  -d "{\"name\":\"Patient Test\",\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}"; echo
 
-echo "=== 2. Login ==="
-LOGIN=$(curl -s -X POST $GATEWAY/auth/login \
-  -H "Content-Type: application/json" \
+printf '\n=== Login patient ===\n'
+LOGIN=$(curl -fsS -X POST "$GATEWAY/auth/login" \
+  -H 'Content-Type: application/json' \
   -d "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}")
-echo "$LOGIN"; echo
-TOKEN=$(get_field "$LOGIN" token)
-[ -z "$USER_ID" ] || [ "$USER_ID" = "$LOGIN" ] && USER_ID=$(get_field "$LOGIN" id)
-echo "TOKEN = ${TOKEN:0:30}..."
-echo "USER_ID = $USER_ID"; echo
+TOKEN=$(printf '%s' "$LOGIN" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>console.log(JSON.parse(s).token||''))")
+[[ -n "$TOKEN" ]] || { echo "Login did not return a token"; exit 1; }
+echo "Patient login: OK"
 
-if [ -z "$TOKEN" ] || [ "$TOKEN" = "$LOGIN" ]; then
-  echo "Pas de token recu, arret du script."
-  exit 1
-fi
+printf '\n=== Single clinic dentist profile ===\n'
+curl -fsS "$GATEWAY/doctors/clinic" -H "Authorization: Bearer $TOKEN"; echo
 
-echo "=== 3. Create doctor ==="
-DOC=$(curl -s -X POST $GATEWAY/doctors \
-  -H "Content-Type: application/json" \
+printf '\n=== Create appointment (doctorId is selected by server) ===\n'
+curl -fsS -X POST "$GATEWAY/appointments" \
+  -H 'Content-Type: application/json' \
   -H "Authorization: Bearer $TOKEN" \
-  -d "{\"name\":\"Dr Ahmed\",\"specialty\":\"Cardiologie\",\"email\":\"$DOC_EMAIL\",\"phone\":\"20123456\"}")
-echo "$DOC"; echo
-DOCTOR_ID=$(get_field "$DOC" id)
-echo "DOCTOR_ID = $DOCTOR_ID"; echo
+  -d "{\"patientName\":\"Patient Test\",\"appointmentDate\":\"$APPOINTMENT_DATE\",\"notes\":\"Contrôle dentaire\"}"; echo
 
-if [ -z "$DOCTOR_ID" ] || [ "$DOCTOR_ID" = "$DOC" ]; then
-  echo "Pas de doctor cree, arret du script."
-  exit 1
-fi
+printf '\n=== Patient appointments ===\n'
+curl -fsS "$GATEWAY/appointments" -H "Authorization: Bearer $TOKEN"; echo
 
-echo "=== 4. List doctors ==="
-curl -s $GATEWAY/doctors -H "Authorization: Bearer $TOKEN"; echo; echo
-
-echo "=== 5. Create appointment ==="
-APPT=$(curl -s -X POST $GATEWAY/appointments \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d "{\"patientId\":\"$USER_ID\",\"patientName\":\"Sami\",\"patientEmail\":\"$EMAIL\",\"doctorId\":\"$DOCTOR_ID\",\"appointmentDate\":\"2026-11-25T10:00:00\",\"notes\":\"Controle annuel\"}")
-echo "$APPT"; echo
-APPT_ID=$(get_field "$APPT" id)
-echo "APPT_ID = $APPT_ID"; echo
-
-echo "=== 6. List appointments ==="
-curl -s $GATEWAY/appointments -H "Authorization: Bearer $TOKEN"; echo; echo
-
-echo "=== 7. Update status ==="
-curl -s -X PUT $GATEWAY/appointments/$APPT_ID/status \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"status":"confirmed"}'; echo; echo
-
-echo "=== 8. Notifications (attente 3s pour RabbitMQ) ==="
-sleep 3
-curl -s "$GATEWAY/notifications" -H "Authorization: Bearer $TOKEN"; echo
+printf '\nSmoke test finished. Check the response statuses and appointment ownership.\n'

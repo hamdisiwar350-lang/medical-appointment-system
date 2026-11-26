@@ -30,10 +30,26 @@ exports.getUnreadCount = async (req, res) => {
 
 exports.markAsRead = async (req, res) => {
   try {
-    const notification = await Notification.findByPk(req.params.id);
-    if (!notification) return res.status(404).json({ error: 'Notification not found' });
+    const email = req.headers['x-user-email'];
+
+    if (!email) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const notification = await Notification.findOne({
+      where: {
+        id: req.params.id,
+        recipientEmail: email
+      }
+    });
+
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found' });
+    }
+
     notification.read = true;
     await notification.save();
+
     res.json({ message: 'Notification marked as read', notification });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -53,8 +69,23 @@ exports.markAllAsRead = async (req, res) => {
 
 exports.getNotificationById = async (req, res) => {
   try {
-    const notification = await Notification.findByPk(req.params.id);
-    if (!notification) return res.status(404).json({ error: 'Notification not found' });
+    const email = req.headers['x-user-email'];
+
+    if (!email) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const notification = await Notification.findOne({
+      where: {
+        id: req.params.id,
+        recipientEmail: email
+      }
+    });
+
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found' });
+    }
+
     res.json(notification);
   } catch (error) {
     res.status(500).json({ error: error.message });

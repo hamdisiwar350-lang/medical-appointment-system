@@ -1,19 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const {
-  createDoctor,
-  getAllDoctors,
+  getClinicDoctor,
   getDoctorById,
-  updateDoctor,
-  deleteDoctor,
-  getSpecialties
+  updateDoctor
 } = require('../controllers/doctorController');
 
-router.post('/', createDoctor);
-router.get('/specialties', getSpecialties);
-router.get('/', getAllDoctors);
+// One clinic and one dentist: there is no public doctor directory.
+router.get('/clinic', getClinicDoctor);
 router.get('/:id', getDoctorById);
 router.put('/:id', updateDoctor);
-router.delete('/:id', deleteDoctor);
 
 module.exports = router;

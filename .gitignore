@@ -1,6 +1,13 @@
 node_modules/
 .env
+.env.*
+!.env.example
 *.log
+*.sql
+backup_*
+backups/
 .DS_Store
 dist/
 build/
+/assistant-figma-v9/
+/assistant-workflow-v8/

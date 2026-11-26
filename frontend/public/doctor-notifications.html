@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#07515a">
+  <title>Notifications — Clinique Dentaire</title>
+  <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/dental-theme.css"><link rel="stylesheet" href="css/figma-dentist.css?v=20261126-4">
+</head>
+<body class="figma-dentist-page" data-doctor-view="notifications">
+<div class="fd-shell">
+  <aside class="fd-sidebar" id="fdSidebar" aria-label="Navigation dentiste"></aside>
+  <button class="fd-scrim" id="fdScrim" aria-label="Fermer le menu" hidden></button>
+  <div class="fd-main">
+    <header class="fd-topbar">
+      <button class="fd-mobile-menu" id="fdMobileMenu" type="button" aria-label="Ouvrir le menu" data-icon="menu" data-size="19"></button>
+      <div class="fd-topbar-spacer"></div>
+      <label class="fd-search"><span data-icon="search" data-size="17"></span><input id="doctorSearch" type="search" placeholder="Rechercher un patient ou un rendez-vous…"></label>
+      <div class="lang-switch inline fd-language"><button class="lang-btn" data-lang="fr">FR</button><button class="lang-btn" data-lang="ar">AR</button></div>
+      <div class="notif-wrap fd-notif-wrap">
+        <button id="notifBellBtn" class="bell-btn fd-bell" type="button" aria-label="Notifications"><span data-icon="bell" data-size="18"></span><span id="notifBadge" class="notif-badge" hidden></span></button>
+        <div id="notifDropdown" class="notif-dropdown fd-notif-dropdown">
+          <div class="notif-dropdown-head"><strong data-i18n="notifBellLabel"></strong><button class="notif-markall" data-notif-mark-all data-i18n="notifMarkAllRead"></button></div>
+          <div id="notifDropdownList" class="notif-dropdown-list"></div><a href="doctor-notifications.html" class="notif-seeall" data-i18n="notifSeeAll"></a>
+        </div>
+      </div>
+      <div class="fd-top-avatar" id="fdTopAvatar">D</div>
+    </header>
+
+    <main class="fd-page-content">
+      <section class="fd-page-heading"><div><p class="fd-eyebrow">ESPACE CLINIQUE</p><h1>Notifications</h1><p>Les notifications de votre compte dentiste.</p></div></section>
+      <section class="fd-panel"><div class="fd-toolbar"><div><h2>Mes notifications</h2><p class="fd-panel-subtitle">Marquez une notification comme lue ou utilisez le bouton ci-dessous.</p></div><button class="fd-primary" type="button" data-notif-mark-all>Tout marquer comme lu</button></div><div id="notifPageList"><div class="fd-empty-state">Chargement…</div></div></section>
+    </main>
+  </div>
+</div>
+<script src="js/translations.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/doctor-app-shell.js?v=20261126-7"></script>
+<script src="js/notifications.js"></script>
+</body></html>

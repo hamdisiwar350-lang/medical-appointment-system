@@ -1,0 +1,100 @@
+/* Assistant reception workflow — shares the dental teal / violet visual language. */
+.assistant-page .assistant-workflow-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr);
+  gap: 1.1rem;
+  margin-top: 1.1rem;
+  align-items: start;
+}
+.assistant-page .assistant-workflow-panel { min-width: 0; }
+.assistant-page .assistant-panel-count {
+  display: inline-flex;
+  min-width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0 .55rem;
+  border-radius: 999px;
+  color: #087f83;
+  background: #e4f7f5;
+  font-weight: 800;
+}
+.assistant-page .assistant-checkin-btn,
+.assistant-page .assistant-walkin-submit {
+  border: 0;
+  border-radius: 10px;
+  background: #0b8585;
+  color: #fff;
+  padding: .62rem .82rem;
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s ease, transform .15s ease;
+}
+.assistant-page .assistant-checkin-btn:hover,
+.assistant-page .assistant-walkin-submit:hover { background: #086e73; transform: translateY(-1px); }
+.assistant-page .assistant-checkin-btn:disabled,
+.assistant-page .assistant-walkin-submit:disabled { opacity: .55; cursor: wait; transform: none; }
+.assistant-page .assistant-queue-state {
+  display: inline-flex;
+  align-items: center;
+  padding: .35rem .58rem;
+  border-radius: 999px;
+  background: #e9f6f4;
+  color: #087b78;
+  font-size: .76rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+.assistant-page .queue-called { background: #eeeaff; color: #6550b5; }
+.assistant-page .queue-in_consultation { background: #e9f0ff; color: #345d9d; }
+.assistant-page .assistant-walkin-form { display: grid; gap: .85rem; }
+.assistant-page .assistant-walkin-form label {
+  display: grid;
+  gap: .38rem;
+  color: #45556b;
+  font-size: .82rem;
+  font-weight: 700;
+}
+.assistant-page .assistant-walkin-form input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #dce5eb;
+  border-radius: 10px;
+  padding: .7rem .8rem;
+  color: #263746;
+  background: #fff;
+  font: inherit;
+  font-size: .9rem;
+  outline: none;
+}
+.assistant-page .assistant-walkin-form input:focus {
+  border-color: #0b8585;
+  box-shadow: 0 0 0 3px rgba(11, 133, 133, .12);
+}
+.assistant-page .assistant-walkin-hint,
+.assistant-page .assistant-privacy-note { color: #718096; font-size: .8rem; line-height: 1.55; }
+.assistant-page .assistant-form-message { min-height: 1.2rem; color: #087b78; font-size: .82rem; }
+.assistant-page .assistant-reception-heading { display: flex; align-items: center; gap: .65rem; }
+.assistant-page .assistant-reception-heading h2 { margin: 0; }
+.assistant-page .assistant-walkin-submit { justify-self: start; min-width: 160px; }
+@media (max-width: 900px) {
+  .assistant-page .assistant-workflow-grid { grid-template-columns: 1fr; }
+}
+.assistant-page .assistant-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1000px) {
+  .assistant-page .assistant-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .assistant-page .assistant-stats { grid-template-columns: 1fr; }
+}
+.assistant-page .assistant-agenda-tools { min-width: min(240px, 100%); }
+.assistant-page .assistant-agenda-search {
+  width: 100%; min-height: 38px; padding: .55rem .75rem;
+  border: 1px solid #dce5eb; border-radius: 10px; background: #fff;
+  color: #263746; font: inherit; font-size: .83rem; outline: none;
+}
+.assistant-page .assistant-agenda-search:focus {
+  border-color: #0b8585; box-shadow: 0 0 0 3px rgba(11, 133, 133, .12);
+}
